@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table View — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  .toolbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .toolbar .search-bar { flex: 1; min-width: 200px; }
+  .filter-group { display: flex; gap: 6px; }
+
+  .table-card { padding: 0; overflow: hidden; }
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-top: 1px solid var(--border);
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .user-cell-name { font-weight: 600; color: var(--text); }
+  .user-cell-email { font-size: 0.78rem; color: var(--text-muted); }
+
+  .actions-cell { display: flex; gap: 4px; }
+  .action-btn {
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-xs); cursor: pointer; transition: all 0.15s;
+    border: none; background: transparent; color: var(--text-dim);
+  }
+  .action-btn:hover { background: var(--bg-warm); color: var(--text-secondary); }
+
+  .bulk-bar {
+    display: none; align-items: center; gap: 12px;
+    padding: 12px 20px; background: var(--accent-bg); border-radius: var(--radius-sm);
+    margin-bottom: 16px; font-size: 0.85rem; color: var(--accent); font-weight: 500;
+  }
+  .bulk-bar.show { display: flex; }
+  .action-menu-wrap { position: relative; display: inline-block; }
+  @media (max-width: 860px) {
+    .toolbar .search-bar { width: 100%; flex: none; }
+    .filter-group { flex-wrap: wrap; }
+    .table-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5),
+    .data-table th:nth-child(6),
+    .data-table td:nth-child(6) { display: none; }
+    .user-cell-email { display: none; }
+  }
+  @media (max-width: 600px) {
+    .data-table th:nth-child(3),
+    .data-table td:nth-child(3) { display: none; }
+    .bulk-bar { flex-wrap: wrap; }
+    .main-header-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:1100px;">
+    <!-- Components: card, table-card, table-wrapper, data-table, badge, avatar, avatar-sm, avatar-accent, avatar-highlight, avatar-info, avatar-success, chip, chip-filter, bulk-bar, search-bar, pagination, page-btn, btn, btn-primary, btn-sm, btn-secondary, btn-danger, btn-ghost, action-btn, main-header-row, main-title, main-subtitle -->
+    <div class="main-header-row">
+      <div>
+        <h1 class="main-title">Team Members</h1>
+        <p class="main-subtitle">Manage who has access to your workspace.</p>
+      </div>
+      <button class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Invite member
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by name or email…">
+      </div>
+      <div class="filter-group">
+        <button class="chip chip-filter active" onclick="setFilter(this)">All</button>
+        <button class="chip chip-filter" onclick="setFilter(this)">Active</button>
+        <button class="chip chip-filter" onclick="setFilter(this)">Pending</button>
+        <button class="chip chip-filter" onclick="setFilter(this)">Inactive</button>
+      </div>
+    </div>
+
+    <div class="bulk-bar" id="bulkBar">
+      <span id="bulkCount">0</span> selected
+      <button class="btn btn-sm btn-secondary" style="margin-left:auto;">Change role</button>
+      <button class="btn btn-sm btn-danger">Remove</button>
+    </div>
+
+    <div class="card table-card">
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:40px;"><input type="checkbox" style="cursor:pointer;" onchange="toggleAll(this)"></th>
+              <th>Member</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Last Active</th>
+              <th>Projects</th>
+              <th style="width:80px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+              <td><div class="user-cell"><div class="avatar avatar-sm avatar-accent">SC</div><div><div class="user-cell-name">Sarah Connor</div><div class="user-cell-email">sarah@company.com</div></div></div></td>
+              <td><span class="badge badge-accent">Admin</span></td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td class="cell-mono" style="font-size:0.8rem;">2 min ago</td>
+              <td>12</td>
+              <td><div class="actions-cell"><button class="action-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><div class="action-menu-wrap"><button class="action-btn" title="More" onclick="toggleMenu(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div class="menu" id="rowMenu1" style="display:none;top:100%;right:0;"><div class="menu-item">Edit role</div><div class="menu-item">Send message</div><div class="menu-divider"></div><div class="menu-item" style="color:var(--danger);">Remove</div></div></div></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+              <td><div class="user-cell"><div class="avatar avatar-sm avatar-highlight">MW</div><div><div class="user-cell-name">Marcus Webb</div><div class="user-cell-email">marcus@company.com</div></div></div></td>
+              <td><span class="badge badge-neutral">Editor</span></td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td class="cell-mono" style="font-size:0.8rem;">1 hour ago</td>
+              <td>8</td>
+              <td><div class="actions-cell"><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+              <td><div class="user-cell"><div class="avatar avatar-sm avatar-info">PS</div><div><div class="user-cell-name">Priya Sharma</div><div class="user-cell-email">priya@company.com</div></div></div></td>
+              <td><span class="badge badge-neutral">Editor</span></td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td class="cell-mono" style="font-size:0.8rem;">3 hours ago</td>
+              <td>5</td>
+              <td><div class="actions-cell"><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+              <td><div class="user-cell"><div class="avatar avatar-sm avatar-success">AL</div><div><div class="user-cell-name">Alex Liu</div><div class="user-cell-email">alex@company.com</div></div></div></td>
+              <td><span class="badge badge-neutral">Viewer</span></td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td class="cell-mono" style="font-size:0.8rem;">Invited</td>
+              <td>0</td>
+              <td><div class="actions-cell"><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+              <td><div class="user-cell"><div class="avatar avatar-sm" style="background:var(--bg-warm);color:var(--text-dim);">TK</div><div><div class="user-cell-name" style="color:var(--text-muted);">Taylor Kim</div><div class="user-cell-email">taylor@company.com</div></div></div></td>
+              <td><span class="badge badge-neutral">Viewer</span></td>
+              <td><span class="badge badge-neutral">Inactive</span></td>
+              <td class="cell-mono" style="font-size:0.8rem;">30 days ago</td>
+              <td>2</td>
+              <td><div class="actions-cell"><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span>Showing 1–5 of 23 members</span>
+        <div class="pagination">
+          <button class="page-btn" disabled>‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">4</button>
+          <button class="page-btn">5</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function toggleMenu(btn) {
+    const menu = btn.nextElementSibling;
+    const isOpen = menu.style.display !== 'none';
+    document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
+    if (!isOpen) menu.style.display = 'block';
+  }
+  document.addEventListener('click', e => { if (!e.target.closest('.action-menu-wrap')) document.querySelectorAll('.menu').forEach(m => m.style.display = 'none'); });
+  function setFilter(el) {
+    el.parentElement.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function toggleAll(el) {
+    document.querySelectorAll('.row-check').forEach(c => c.checked = el.checked);
+    updateBulk();
+  }
+  function updateBulk() {
+    const checked = document.querySelectorAll('.row-check:checked').length;
+    const bar = document.getElementById('bulkBar');
+    document.getElementById('bulkCount').textContent = checked;
+    bar.classList.toggle('show', checked > 0);
+  }
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

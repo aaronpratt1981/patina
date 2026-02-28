@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  .article-body { max-width: 680px; font-family: var(--font-display); font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary); }
+  .article-body p { margin-bottom: 1.5em; }
+  .article-body h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.01em; margin: 2em 0 0.8em; color: var(--text-primary); }
+
+  .article-hero-img { width: 100%; height: 280px; background: var(--highlight-bg); border-radius: var(--radius); margin-bottom: 32px; }
+
+  .article-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+  .article-meta .meta-author { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; font-weight: 600; }
+  .article-meta .meta-date { font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+  .article-title { font-family: var(--font-display); font-size: 2rem; font-weight: 400; letter-spacing: -0.025em; margin-bottom: 16px; line-height: 1.3; }
+
+  blockquote { border-left: 3px solid var(--accent); padding: 12px 0 12px 20px; margin: 2em 0; font-style: italic; color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; }
+
+  .article-inline-img { width: 100%; height: 200px; background: var(--bg-warm); border-radius: var(--radius-sm); margin: 2em 0; }
+
+  .article-tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 32px 0; }
+
+  .article-sidebar { }
+  .toc-wrapper { border-left: 2px solid var(--border); padding-left: 16px; position: sticky; top: 24px; }
+  .toc-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+  .toc a { display: block; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; padding: 3px 0; line-height: 1.4; transition: color 0.15s; }
+  .toc a:hover { color: var(--text); }
+  .toc a.active { color: var(--accent); font-weight: 600; }
+  .toc a.toc-h3 { padding-left: 14px; font-size: 0.76rem; }
+
+  .article-grid { display: grid; grid-template-columns: 1fr 220px; gap: 40px; }
+
+  .comment-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .comment-item:last-child { border-bottom: none; }
+  .comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .comment-name { font-size: 0.85rem; font-weight: 600; }
+  .comment-time { font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono); }
+  .comment-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+  .comment-box { display: flex; gap: 12px; margin-top: 20px; }
+  .comment-box textarea { flex: 1; }
+
+  .comment-reply { margin-left: 44px; }
+  .comment-actions { margin-top: 6px; }
+  .comment-actions button { background: none; border: none; font-size: 0.78rem; color: var(--text-muted); cursor: pointer; padding: 2px 0; font-family: var(--font-body); font-weight: 500; }
+  .comment-actions button:hover { color: var(--accent); }
+  .comment-reply-box { display: flex; gap: 10px; margin-top: 10px; margin-left: 44px; padding-bottom: 4px; }
+  .comment-reply-box textarea { flex: 1; }
+  .comment-reply-box .reply-btns { display: flex; flex-direction: column; gap: 4px; align-self: flex-end; }
+
+  .meta-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+  .meta-value { font-size: 0.85rem; font-weight: 500; text-align: right; }
+
+  @media (max-width: 960px) {
+    .article-grid { grid-template-columns: 1fr; }
+    .article-sidebar { display: none; }
+    .article-title { font-size: 1.6rem; }
+    .article-hero-img { height: 200px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:1000px;">
+
+    <nav class="breadcrumbs mb-16">
+      <span class="breadcrumb-item"><a href="index.html">Home</a></span>
+      <span class="breadcrumb-item">Article</span>
+    </nav>
+
+    <div class="article-grid">
+      <div>
+        <h1 class="article-title">The Quiet Art of Designing Systems That Last</h1>
+
+        <div class="article-meta">
+          <div class="meta-author">
+            <div class="avatar avatar-sm avatar-accent">EN</div>
+            Elena Navarro
+          </div>
+          <span class="meta-date">Feb 12, 2026</span>
+          <span class="badge badge-muted">8 min read</span>
+        </div>
+
+        <div class="article-hero-img"></div>
+
+        <div class="article-body">
+          <h2 id="sec-introduction">Introduction</h2>
+          <p>Good design systems don't announce themselves. They recede into the background, providing just enough structure for teams to move quickly without second-guessing every decision. The best ones feel inevitable in hindsight — not because they were obvious, but because they earned trust one small choice at a time.</p>
+
+          <h2 id="sec-rebuilding">Rebuilding from Scratch</h2>
+          <p>When we started rebuilding our component library eighteen months ago, the temptation was to over-specify everything. Every spacing value, every color variant, every interaction state documented down to the pixel. We'd seen other teams do this and admired the thoroughness. But thoroughness without restraint becomes its own kind of debt.</p>
+
+          <blockquote>A system that tries to anticipate every need will satisfy none of them well. Constraints should guide, not imprison.</blockquote>
+
+          <h3 id="sec-primitives">Choosing Primitives</h3>
+          <p>Instead, we focused on a smaller surface area — a handful of primitives that could compose into more complex patterns. A card is just a container with consistent padding and a border. A badge is just a small label with a background. Nothing clever, nothing surprising. The power comes from how predictably they combine.</p>
+
+          <h3 id="sec-composition">Composition over Configuration</h3>
+          <p>Rather than adding props for every variant, we leaned into composition. A status indicator is just a badge inside a card header. A user row is an avatar next to a text block. When the primitives are consistent, you don't need fifty specialized components — you need five good ones and the freedom to arrange them.</p>
+
+          <div class="article-inline-img"></div>
+
+          <h2 id="sec-friction">The Role of Friction</h2>
+          <p>There's a counterintuitive truth about design systems: a little friction is healthy. If every component is trivially easy to use, people stop thinking about whether they should use it. We intentionally left some patterns uncodified — not because we couldn't build them, but because the conversation around "should we add this?" was more valuable than the component itself.</p>
+
+          <h3 id="sec-rfcs">The RFC Process</h3>
+          <p>We introduced a lightweight RFC process for new components. Any team member can propose an addition, but they need to document three real use cases and show that existing primitives can't solve the problem. This has cut our component count by a third while increasing satisfaction scores from the teams using the system.</p>
+
+          <h2 id="sec-governance">Governance and Adoption</h2>
+          <p>A design system without governance is just a component library that nobody trusts. We established a rotating council of two designers and two engineers who review proposals weekly. Decisions are documented publicly, and every rejection includes a rationale. Transparency builds trust faster than any onboarding deck.</p>
+
+          <h3 id="sec-metrics">Measuring Success</h3>
+          <p>We track three metrics: adoption rate across product teams, time-to-first-component for new engineers, and the ratio of custom overrides to standard usage. The last one is the most telling — when teams stop overriding your components, you know the system is working.</p>
+        </div>
+
+        <div class="article-tags">
+          <span class="badge badge-muted">Design Systems</span>
+          <span class="badge badge-muted">Process</span>
+          <span class="badge badge-muted">Architecture</span>
+          <span class="badge badge-muted">Teams</span>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:8px 0 32px;">
+
+        <!-- Comments -->
+        <div>
+          <div class="card-title mb-16" style="font-size:0.95rem;">Comments (4)</div>
+          <div class="card">
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-highlight">MW</div>
+                <span class="comment-name">Marcus Webb</span>
+                <span class="comment-time">2 hours ago</span>
+              </div>
+              <div class="comment-body">This resonates deeply. We went through the exact same over-specification phase and only realized the cost when onboarding new designers — they were overwhelmed by choice instead of empowered by it.</div>
+              <div class="comment-actions"><button onclick="toggleReply(this)">Reply</button></div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-accent">SC</div>
+                <span class="comment-name">Sarah Connor</span>
+                <span class="comment-time">1 hour ago</span>
+              </div>
+              <div class="comment-body">The section on friction is spot-on. We started requiring a brief RFC for any new component, and the quality of what gets added has gone up dramatically.</div>
+              <div class="comment-actions"><button onclick="toggleReply(this)">Reply</button></div>
+            </div>
+
+            <div class="comment-item comment-reply">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-info">PS</div>
+                <span class="comment-name">Priya Sharma</span>
+                <span class="comment-time">45 min ago</span>
+              </div>
+              <div class="comment-body">Agreed on the RFC approach, Sarah. Do you have a template you could share? We've been trying to formalize something similar.</div>
+              <div class="comment-actions"><button onclick="toggleReply(this)">Reply</button></div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-success">JD</div>
+                <span class="comment-name">Jane Doe</span>
+                <span class="comment-time">12 min ago</span>
+              </div>
+              <div class="comment-body">Great read. The composability angle is something I think a lot of teams overlook — it's not about having the most components, it's about having the right primitives.</div>
+              <div class="comment-actions"><button onclick="toggleReply(this)">Reply</button></div>
+            </div>
+          </div>
+
+          <div class="comment-box">
+            <div class="avatar avatar-sm avatar-accent" style="margin-top:4px;">JD</div>
+            <textarea class="field-input" rows="2" placeholder="Write a comment…" style="min-height:auto;"></textarea>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-end;">Post</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar: Author Bio + ToC -->
+      <div class="article-sidebar">
+        <div class="card">
+          <div class="card-title mb-16" style="font-size:0.95rem;">About the Author</div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div class="avatar avatar-accent" style="width:48px;height:48px;font-size:1rem;">EN</div>
+            <div>
+              <div style="font-size:0.88rem; font-weight:600;">Elena Navarro</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Design Lead</div>
+            </div>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6; margin:0;">Elena leads the design systems team and has spent the past decade building scalable UI frameworks for product companies. She writes about the intersection of design, engineering, and team culture.</p>
+        </div>
+
+        <div class="toc-wrapper" style="margin-top:24px;">
+          <nav class="toc" id="toc">
+            <div class="toc-title">On this page</div>
+            <!-- populated by JS -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+function toggleReply(btn) {
+  const item = btn.closest('.comment-item');
+  const existing = item.nextElementSibling;
+  if (existing && existing.classList.contains('comment-reply-box')) {
+    existing.remove();
+    return;
+  }
+  document.querySelectorAll('.comment-reply-box').forEach(b => b.remove());
+  const box = document.createElement('div');
+  box.className = 'comment-reply-box';
+  box.innerHTML = '<div class="avatar avatar-sm avatar-accent" style="margin-top:4px;">JD</div>' +
+    '<textarea class="field-input" rows="2" placeholder="Write a reply\u2026" style="min-height:auto;"></textarea>' +
+    '<div class="reply-btns">' +
+    '<button class="btn btn-primary btn-sm">Reply</button>' +
+    '<button class="btn btn-ghost btn-sm" onclick="this.closest(\'.comment-reply-box\').remove()">Cancel</button>' +
+    '</div>';
+  item.after(box);
+  box.querySelector('textarea').focus();
+}
+</script>
+<script>
+(function() {
+  const toc = document.getElementById('toc');
+  if (!toc) return;
+  const headings = document.querySelectorAll('.article-body h2[id], .article-body h3[id]');
+  headings.forEach(h => {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+  });
+
+  const links = toc.querySelectorAll('a');
+  function updateActive() {
+    let current = null;
+    headings.forEach(h => {
+      if (h.getBoundingClientRect().top <= 80) current = h;
+    });
+    links.forEach(a => {
+      a.classList.toggle('active', current && a.getAttribute('href') === '#' + current.id);
+    });
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

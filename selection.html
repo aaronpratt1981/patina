@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selection — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .demo-row:last-child { margin-bottom: 0; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+  .hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; }
+  .menu-wrap { position: relative; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <div class="top-bar-title">Selection</div>
+      <div class="top-bar-text">Chips, menus, and file uploads</div>
+      <div class="top-bar-spacer"></div>
+      <div class="top-bar-badge">6 components</div>
+    </div>
+
+    <!-- Components: chip, chip-filter, chip-input, chip-close, chip-field, menu, menu-item, menu-item-danger, menu-divider, file-dropzone, file-item, file-upload-mini, section-rule, demo-section, demo-box, demo-row, demo-label, code-panel, usage-block -->
+
+    <div class="main-header">
+      <h1 class="main-title">Selection</h1>
+      <p class="main-subtitle">Chips for filtering and tagging; menus for contextual actions.</p>
+    </div>
+
+    <nav class="page-tabs">
+  <a class="page-tab" href="#filter-chips">Filter Chips</a>
+  <a class="page-tab" href="#input-chips">Input Chips</a>
+  <a class="page-tab" href="#suggestion-chips">Suggestion Chips</a>
+  <a class="page-tab" href="#menu">Menu</a>
+  <a class="page-tab" href="#file-upload">File Upload</a>
+  <a class="page-tab" href="#file-upload-mini">Upload Mini</a>
+</nav>
+
+    <!-- Filter Chips -->
+    <div class="demo-section" id="filter-chips">
+      <h2 class="demo-title">Filter Chips</h2>
+      <p class="demo-desc">Single or multi-select filtering. Click to toggle active state.</p>
+      <div class="demo-box">
+        <div class="demo-row">
+          <button class="chip chip-filter active" onclick="toggleFilter(this)">All</button>
+          <button class="chip chip-filter" onclick="toggleFilter(this)">Design</button>
+          <button class="chip chip-filter" onclick="toggleFilter(this)">Engineering</button>
+          <button class="chip chip-filter" onclick="toggleFilter(this)">Marketing</button>
+          <button class="chip chip-filter" onclick="toggleFilter(this)">
+            Priority
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Multi-category filtering on lists or grids.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Binary toggles — use a switch instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;button class="chip chip-filter active" onclick="toggleFilter(this)"&gt;All&lt;/button&gt;
+&lt;button class="chip chip-filter" onclick="toggleFilter(this)"&gt;Design&lt;/button&gt;
+&lt;button class="chip chip-filter" onclick="toggleFilter(this)"&gt;Engineering&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- Input Chips -->
+    <div class="demo-section" id="input-chips">
+      <h2 class="demo-title">Input Chips (Removable)</h2>
+      <p class="demo-desc">Tag-style input for multi-value fields. Press Enter to add, click × to remove.</p>
+      <div class="demo-box">
+        <div class="demo-label">Tags</div>
+        <div class="chip-field" id="chipField">
+          <span class="chip chip-input" data-value="react">react <button class="chip-close" onclick="removeChip(this)" aria-label="Remove react">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button></span>
+          <span class="chip chip-input" data-value="typescript">typescript <button class="chip-close" onclick="removeChip(this)" aria-label="Remove typescript">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button></span>
+          <span class="chip chip-input" data-value="design-system">design-system <button class="chip-close" onclick="removeChip(this)" aria-label="Remove design-system">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button></span>
+          <input type="text" id="chipInput" placeholder="Add tag..." aria-label="Add tag">
+        </div>
+        <p class="hint">Press Enter to add a tag. Click × to remove.</p>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Multi-value text inputs (tags, recipients).</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Values should come from a predefined list — use multiselect picklist.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="chip-field" id="chipField"&gt;
+  &lt;span class="chip chip-input" data-value="react"&gt;
+    react
+    &lt;button class="chip-close" onclick="removeChip(this)" aria-label="Remove react"&gt;
+      &lt;svg ...&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;/span&gt;
+  &lt;input type="text" id="chipInput" placeholder="Add tag..." aria-label="Add tag"&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- Suggestion Chips -->
+    <div class="demo-section" id="suggestion-chips">
+      <h2 class="demo-title">Suggestion Chips</h2>
+      <p class="demo-desc">Contextual suggestions with leading icons. Non-dismissible.</p>
+      <div class="demo-box">
+        <div class="demo-row">
+          <button class="chip chip-filter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Trending
+          </button>
+          <button class="chip chip-filter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Recent
+          </button>
+          <button class="chip chip-filter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Popular
+          </button>
+          <button class="chip chip-filter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Discover
+          </button>
+          <button class="chip chip-filter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            For You
+          </button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Surfacing contextual actions or content categories as quick-access shortcuts.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>User needs to filter — use filter chips with active toggle state.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;button class="chip chip-filter"&gt;
+  &lt;svg width="16" height="16" ...&gt;...&lt;/svg&gt;
+  Trending
+&lt;/button&gt;
+&lt;button class="chip chip-filter"&gt;
+  &lt;svg width="16" height="16" ...&gt;...&lt;/svg&gt;
+  Recent
+&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- Menu / Dropdown -->
+    <div class="demo-section" id="menu">
+      <h2 class="demo-title">Menu / Dropdown</h2>
+      <p class="demo-desc">Contextual action menus. Click outside to dismiss.</p>
+      <div class="demo-box">
+        <div class="menu-wrap" id="menuWrap">
+          <button class="btn btn-secondary" onclick="toggleMenu()" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+            Options
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="menu" id="optionsMenu" style="display:none; min-width:180px;">
+            <button class="menu-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit
+            </button>
+            <button class="menu-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Duplicate
+            </button>
+            <button class="menu-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+            <hr class="menu-divider">
+            <div class="menu-item menu-item-danger">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              Delete
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Contextual actions on a specific item.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Navigation — use tabs or links instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="menu-wrap"&gt;
+  &lt;button class="btn btn-secondary" onclick="toggleMenu()" aria-haspopup="true" aria-expanded="false"&gt;
+    Options
+  &lt;/button&gt;
+  &lt;div class="menu" style="min-width:180px;"&gt;
+    &lt;button class="menu-item"&gt;&lt;svg ...&gt;...&lt;/svg&gt; Edit&lt;/button&gt;
+    &lt;button class="menu-item"&gt;&lt;svg ...&gt;...&lt;/svg&gt; Duplicate&lt;/button&gt;
+    &lt;button class="menu-item"&gt;&lt;svg ...&gt;...&lt;/svg&gt; Export&lt;/button&gt;
+    &lt;hr class="menu-divider"&gt;
+    &lt;div class="menu-item menu-item-danger"&gt;&lt;svg ...&gt;...&lt;/svg&gt; Delete&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- File Upload -->
+    <div class="demo-section" id="file-upload">
+      <h2 class="demo-title">File Upload</h2>
+      <p class="demo-desc">Drag-and-drop or click to browse. Shows file list with progress and status.</p>
+      <div class="demo-box">
+
+        <div class="demo-label">Drop Zone</div>
+        <div class="file-dropzone" id="fileDropzone">
+          <input type="file" id="fileInput" multiple hidden>
+          <div class="file-dropzone-content">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-dim)"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="file-dropzone-text">Drag files here or <button class="file-browse-link" type="button" onclick="document.getElementById('fileInput').click()">browse</button></div>
+            <div class="file-dropzone-hint">PNG, JPG, PDF up to 10 MB</div>
+          </div>
+        </div>
+
+        <div class="demo-label" style="margin-top:24px;">File List</div>
+        <div class="file-list" id="fileList">
+          <div class="file-item">
+            <div class="file-item-icon file-item-icon--image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="file-item-info">
+              <div class="file-item-name">screenshot-dashboard.png</div>
+              <div class="file-item-meta">2.4 MB &middot; Complete</div>
+            </div>
+            <span class="badge badge-success" style="font-size:0.7rem;">Uploaded</span>
+            <button class="file-item-remove" aria-label="Remove file" onclick="this.closest('.file-item').remove()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="file-item">
+            <div class="file-item-icon file-item-icon--doc">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="file-item-info">
+              <div class="file-item-name">report-q4-2025.pdf</div>
+              <div class="file-item-meta">1.1 MB &middot; Uploading...</div>
+              <div class="file-progress"><div class="file-progress-fill" style="width:65%"></div></div>
+            </div>
+            <span class="file-item-percent">65%</span>
+            <button class="file-item-remove" aria-label="Cancel upload" onclick="this.closest('.file-item').remove()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="file-item file-item--error">
+            <div class="file-item-icon file-item-icon--error">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="file-item-info">
+              <div class="file-item-name">video-raw.mov</div>
+              <div class="file-item-meta file-item-meta--error">File too large (124 MB). Max 10 MB.</div>
+            </div>
+            <button class="file-item-remove" aria-label="Dismiss error" onclick="this.closest('.file-item').remove()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Single or multi-file selection with visual feedback.</li>
+              <li>Drag-and-drop from desktop or file manager.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>Only a single file is needed with no preview — use a plain file input.</li>
+              <li>Large batch imports — use a dedicated import flow with progress.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="file-dropzone" id="fileDropzone"&gt;
+  &lt;input type="file" multiple hidden&gt;
+  &lt;div class="file-dropzone-content"&gt;
+    &lt;svg ...&gt;...&lt;/svg&gt;
+    &lt;div class="file-dropzone-text"&gt;Drag files here or &lt;button class="file-browse-link"&gt;browse&lt;/button&gt;&lt;/div&gt;
+    &lt;div class="file-dropzone-hint"&gt;PNG, JPG, PDF up to 10 MB&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="file-list"&gt;
+  &lt;div class="file-item"&gt;
+    &lt;div class="file-item-icon file-item-icon--image"&gt;&lt;svg ...&gt;&lt;/svg&gt;&lt;/div&gt;
+    &lt;div class="file-item-info"&gt;
+      &lt;div class="file-item-name"&gt;photo.png&lt;/div&gt;
+      &lt;div class="file-item-meta"&gt;2.4 MB &amp;middot; Complete&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;span class="badge badge-success"&gt;Uploaded&lt;/span&gt;
+    &lt;button class="file-item-remove"&gt;&lt;svg ...&gt;&lt;/svg&gt;&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- Mini File Upload -->
+    <div class="demo-section" id="file-upload-mini">
+      <h2 class="demo-title">File Upload — Mini</h2>
+      <p class="demo-desc">Compact inline upload for forms, comments, or constrained layouts.</p>
+      <div class="demo-box">
+
+        <div class="demo-label">Inline</div>
+        <div class="demo-row">
+          <div class="file-upload-mini" id="miniUpload1">
+            <input type="file" hidden>
+            <button class="file-mini-btn" type="button" onclick="this.previousElementSibling.click()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.49"/></svg>
+              Attach file
+            </button>
+          </div>
+          <div class="file-upload-mini">
+            <input type="file" hidden>
+            <button class="file-mini-btn file-mini-btn--icon" type="button" onclick="this.previousElementSibling.click()" aria-label="Attach file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.49"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="demo-label" style="margin-top:24px;">With attached files</div>
+        <div class="file-mini-attachments">
+          <div class="file-mini-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            logo.png
+            <span class="file-mini-size">420 KB</span>
+            <button class="file-mini-remove" onclick="this.closest('.file-mini-chip').remove()" aria-label="Remove">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="file-mini-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            brief.pdf
+            <span class="file-mini-size">1.2 MB</span>
+            <button class="file-mini-remove" onclick="this.closest('.file-mini-chip').remove()" aria-label="Remove">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="file-mini-chip file-mini-chip--uploading">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            spec.docx
+            <span class="file-mini-size">43%</span>
+            <div class="file-mini-progress"><div class="file-mini-progress-fill" style="width:43%"></div></div>
+          </div>
+        </div>
+
+        <div class="demo-label" style="margin-top:24px;">Compact drop target</div>
+        <div class="file-dropzone-mini" id="miniDropzone">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Drop file or <button class="file-browse-link" type="button" onclick="event.stopPropagation()">browse</button></span>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Attaching files to comments, messages, or form fields.</li>
+              <li>Space-constrained areas like toolbars or inline editors.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>Primary upload flow — use the full drop zone for better discoverability.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;!-- Attach button --&gt;
+&lt;div class="file-upload-mini"&gt;
+  &lt;input type="file" hidden&gt;
+  &lt;button class="file-mini-btn"&gt;
+    &lt;svg ...&gt;...&lt;/svg&gt; Attach file
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Icon-only --&gt;
+&lt;button class="file-mini-btn file-mini-btn--icon"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;!-- Attachment chips --&gt;
+&lt;div class="file-mini-attachments"&gt;
+  &lt;div class="file-mini-chip"&gt;
+    &lt;svg ...&gt;...&lt;/svg&gt;
+    logo.png
+    &lt;span class="file-mini-size"&gt;420 KB&lt;/span&gt;
+    &lt;button class="file-mini-remove"&gt;&lt;svg ...&gt;...&lt;/svg&gt;&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Compact drop target --&gt;
+&lt;div class="file-dropzone-mini"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+  &lt;span&gt;Drop file or &lt;button class="file-browse-link"&gt;browse&lt;/button&gt;&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+  </main>
+</div>
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Filter chips — toggle active
+  function toggleFilter(el) {
+    el.classList.toggle('active');
+  }
+
+  // Input chips — add on Enter, remove on ×
+  const chipInput = document.getElementById('chipInput');
+  const chipField = document.getElementById('chipField');
+
+  chipInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = this.value.trim();
+      if (!val) return;
+      const chip = document.createElement('span');
+      chip.className = 'chip chip-input';
+      chip.dataset.value = val;
+      chip.innerHTML = val + ' <button class="chip-close" onclick="removeChip(this)" aria-label="Remove ' + val + '"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+      chipField.insertBefore(chip, chipInput);
+      this.value = '';
+    }
+  });
+
+  function removeChip(btn) {
+    btn.closest('.chip').remove();
+  }
+
+  // Menu / Dropdown
+  function toggleMenu() {
+    const menu = document.getElementById('optionsMenu');
+    const btn = document.getElementById('menuBtn');
+    const open = menu.style.display === 'none';
+    menu.style.display = open ? 'block' : 'none';
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('menuWrap');
+    if (wrap && !wrap.contains(e.target)) {
+      const menu = document.getElementById('optionsMenu');
+      const btn = document.getElementById('menuBtn');
+      if (menu) menu.style.display = 'none';
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // File upload — drag and drop
+  const dropzone = document.getElementById('fileDropzone');
+  const fileInput = document.getElementById('fileInput');
+  if (dropzone && fileInput) {
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+    });
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('drop', (e) => { handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
+  }
+
+  function handleFiles(files) {
+    const list = document.getElementById('fileList');
+    Array.from(files).forEach(file => {
+      const isImage = file.type.startsWith('image/');
+      const tooLarge = file.size > 10 * 1024 * 1024;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      const iconClass = tooLarge ? 'file-item-icon--error' : (isImage ? 'file-item-icon--image' : 'file-item-icon--doc');
+      const iconSvg = tooLarge
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+        : isImage
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+
+      const item = document.createElement('div');
+      item.className = 'file-item' + (tooLarge ? ' file-item--error' : '');
+      item.innerHTML = `
+        <div class="file-item-icon ${iconClass}">${iconSvg}</div>
+        <div class="file-item-info">
+          <div class="file-item-name">${file.name}</div>
+          <div class="file-item-meta ${tooLarge ? 'file-item-meta--error' : ''}">${tooLarge ? 'File too large (' + sizeMB + ' MB). Max 10 MB.' : sizeMB + ' MB &middot; Complete'}</div>
+        </div>
+        ${tooLarge ? '' : '<span class="badge badge-success" style="font-size:0.7rem;">Uploaded</span>'}
+        <button class="file-item-remove" aria-label="Remove" onclick="this.closest('.file-item').remove()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+      list.appendChild(item);
+    });
+  }
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

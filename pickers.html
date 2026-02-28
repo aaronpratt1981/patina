@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickers — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-row { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .demo-row:last-child { margin-bottom: 0; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+  .demo-col { flex: 1; min-width: 220px; }
+  .section-rule { border: none; border-top: 1px solid var(--border); margin: 0 0 48px; }
+
+  /* Date picker supplemental */
+  .date-picker-month-year { font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-xs); transition: background 0.12s; }
+  .date-picker-month-year:hover { background: var(--bg-warm); }
+  .date-picker-year-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px 0; }
+  .date-picker-year-option { padding: 7px 4px; border-radius: var(--radius-xs); font-size: 0.82rem; text-align: center; cursor: pointer; color: var(--text); transition: background 0.1s; }
+  .date-picker-year-option:hover { background: var(--bg-warm); }
+  .date-picker-year-option.current { background: var(--accent); color: #fff; font-weight: 600; border-radius: var(--radius-xs); }
+
+  /* Date range picker */
+  .date-picker-day.range-start { background: var(--accent); color: #fff; border-radius: var(--radius-xs) 0 0 var(--radius-xs); }
+  .date-picker-day.range-end { background: var(--accent); color: #fff; border-radius: 0 var(--radius-xs) var(--radius-xs) 0; }
+  .date-picker-day.in-range { background: var(--accent-bg); color: var(--accent-dark); border-radius: 0; }
+  .date-picker-day.range-start.range-end { border-radius: var(--radius-xs); }
+  .date-range-display { font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px; text-align: center; min-height: 1.2em; }
+
+  /* Time picker column header */
+  .time-picker-col-header { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); text-align: center; padding: 4px 0 6px; }
+
+  /* Month/Year picker */
+  .month-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px 0; }
+  .month-picker-option { padding: 10px 4px; border-radius: var(--radius-xs); font-size: 0.85rem; text-align: center; cursor: pointer; color: var(--text); transition: background 0.1s; border: 1.5px solid transparent; }
+  .month-picker-option:hover { background: var(--bg-warm); }
+  .month-picker-option.active { background: var(--accent); color: #fff; font-weight: 600; border-color: var(--accent); }
+  .month-picker-option.current { border-color: var(--accent); color: var(--accent); font-weight: 500; }
+  .month-picker-option.current.active { color: #fff; }
+  .month-picker-display { font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px; text-align: center; min-height: 1.2em; }
+
+  /* Picklist */
+  .picklist { position: relative; display: inline-block; width: 100%; max-width: 320px; }
+  .picklist-trigger { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); font-size: 0.88rem; color: var(--text); cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s; }
+  .picklist-trigger:hover { border-color: var(--border-strong); }
+  .picklist.open .picklist-trigger { border-color: var(--accent); box-shadow: var(--shadow-focus); }
+  .picklist-chevron { color: var(--text-muted); flex-shrink: 0; transition: transform 0.2s; }
+  .picklist.open .picklist-chevron { transform: rotate(180deg); }
+  .picklist-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-md); z-index: 100; overflow: hidden; display: none; }
+  .picklist.open .picklist-dropdown { display: block; }
+  .picklist-search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
+  .picklist-search { width: 100%; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-xs); font-size: 0.85rem; font-family: var(--font-body); background: var(--bg); color: var(--text); outline: none; box-sizing: border-box; }
+  .picklist-search:focus { border-color: var(--accent); }
+  .picklist-options { max-height: 200px; overflow-y: auto; padding: 6px; }
+  .picklist-option { padding: 8px 10px; border-radius: var(--radius-xs); font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
+  .picklist-option:hover { background: var(--bg-warm); }
+  .picklist-option.selected { color: var(--accent); font-weight: 500; }
+  .picklist-option.hidden { display: none; }
+
+  /* Multiselect Picklist */
+  .picklist-multi .picklist-trigger { flex-wrap: wrap; gap: 6px; min-height: 44px; align-items: center; }
+  .picklist-tag { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-bg); color: var(--accent-dark); border: 1px solid var(--accent-border); border-radius: var(--radius-full); padding: 2px 8px 2px 10px; font-size: 0.78rem; font-weight: 500; }
+  .picklist-tag-remove { background: none; border: none; cursor: pointer; color: var(--accent); padding: 0; display: flex; align-items: center; }
+  .picklist-tag-remove:hover { color: var(--accent-dark); }
+
+  @media (max-width: 860px) {
+    .demo-row { flex-wrap: wrap; }
+    .demo-col { min-width: 100%; }
+    .picklist { max-width: 100%; }
+    .date-picker { max-width: 100%; }
+    .time-picker { flex-wrap: wrap; gap: 8px; }
+    .time-picker input[type="text"],
+    .time-picker select { max-width: 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="top-bar-title">Pickers</div>
+    </div>
+
+    <!-- Components: date-picker, date-picker-header, date-picker-nav, date-picker-weekdays, date-picker-grid, date-picker-day, date-picker-month-year, date-picker-year-grid, date-picker-year-option, date-range-display, month-picker-grid, month-picker-option, month-picker-display, picklist, picklist-trigger, picklist-dropdown, picklist-option, picklist-multi, picklist-tag, time-picker, section-rule, toc, toc-link, demo-section, demo-box, demo-row, demo-label, code-panel, usage-block -->
+
+    <div class="main-header">
+      <h1 class="main-title">Pickers</h1>
+      <p class="main-subtitle">Specialized selection widgets for dates, times, and complex option lists.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#datepicker">Date Picker</a>
+      <a class="page-tab" href="#daterange">Date Range</a>
+      <a class="page-tab" href="#monthyear">Month/Year</a>
+      <a class="page-tab" href="#timepicker">Time Picker</a>
+      <a class="page-tab" href="#picklist">Picklist</a>
+      <a class="page-tab" href="#multiselect">Multiselect</a>
+    </nav>
+
+    <!-- DATE PICKER -->
+    <div id="datepicker" class="demo-section">
+      <h2 class="demo-title">Date Picker</h2>
+      <p class="demo-desc">Static calendar view for February 2026 with the current day highlighted. Click the month/year label to switch to year selection.</p>
+
+      <div class="demo-box">
+        <div class="date-picker" id="datePicker">
+          <div class="date-picker-header">
+            <button class="date-picker-nav" aria-label="Previous month">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 4L6 8l4 4"/>
+              </svg>
+            </button>
+            <span class="date-picker-month-year" id="dpMonthYear" onclick="toggleYearGrid()">February 2026</span>
+            <button class="date-picker-nav" aria-label="Next month">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 4l4 4-4 4"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Day grid -->
+          <div id="dpDayView">
+            <div class="date-picker-weekdays">
+              <span>Su</span>
+              <span>Mo</span>
+              <span>Tu</span>
+              <span>We</span>
+              <span>Th</span>
+              <span>Fr</span>
+              <span>Sa</span>
+            </div>
+            <div class="date-picker-grid" id="dpDayGrid">
+              <!-- Feb 2026 starts on Sunday -->
+              <button class="date-picker-day" onclick="selectDay(this)">1</button>
+              <button class="date-picker-day" onclick="selectDay(this)">2</button>
+              <button class="date-picker-day" onclick="selectDay(this)">3</button>
+              <button class="date-picker-day" onclick="selectDay(this)">4</button>
+              <button class="date-picker-day" onclick="selectDay(this)">5</button>
+              <button class="date-picker-day" onclick="selectDay(this)">6</button>
+              <button class="date-picker-day" onclick="selectDay(this)">7</button>
+              <button class="date-picker-day" onclick="selectDay(this)">8</button>
+              <button class="date-picker-day" onclick="selectDay(this)">9</button>
+              <button class="date-picker-day" onclick="selectDay(this)">10</button>
+              <button class="date-picker-day" onclick="selectDay(this)">11</button>
+              <button class="date-picker-day" onclick="selectDay(this)">12</button>
+              <button class="date-picker-day" onclick="selectDay(this)">13</button>
+              <button class="date-picker-day" onclick="selectDay(this)">14</button>
+              <button class="date-picker-day" onclick="selectDay(this)">15</button>
+              <button class="date-picker-day" onclick="selectDay(this)">16</button>
+              <button class="date-picker-day" onclick="selectDay(this)">17</button>
+              <button class="date-picker-day" onclick="selectDay(this)">18</button>
+              <button class="date-picker-day" onclick="selectDay(this)">19</button>
+              <button class="date-picker-day" onclick="selectDay(this)">20</button>
+              <button class="date-picker-day" onclick="selectDay(this)">21</button>
+              <button class="date-picker-day" onclick="selectDay(this)">22</button>
+              <button class="date-picker-day" onclick="selectDay(this)">23</button>
+              <button class="date-picker-day" onclick="selectDay(this)">24</button>
+              <button class="date-picker-day" onclick="selectDay(this)">25</button>
+              <button class="date-picker-day" onclick="selectDay(this)">26</button>
+              <button class="date-picker-day today" onclick="selectDay(this)">27</button>
+              <button class="date-picker-day" onclick="selectDay(this)">28</button>
+            </div>
+          </div>
+
+          <!-- Year grid (hidden by default) -->
+          <div id="dpYearView" style="display:none;">
+            <div class="date-picker-year-grid" id="dpYearGrid"></div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Single date selection with month context.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Date range selection — use two pickers or a range component.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="date-picker"&gt;
+  &lt;div class="date-picker-header"&gt;
+    &lt;button class="date-picker-nav" aria-label="Previous month"&gt;...&lt;/button&gt;
+    &lt;span class="date-picker-month-year" onclick="toggleYearGrid()"&gt;February 2026&lt;/span&gt;
+    &lt;button class="date-picker-nav" aria-label="Next month"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="date-picker-weekdays"&gt;
+    &lt;span&gt;Su&lt;/span&gt;&lt;!-- ... --&gt;
+  &lt;/div&gt;
+  &lt;div class="date-picker-grid"&gt;
+    &lt;button class="date-picker-day"&gt;1&lt;/button&gt;
+    &lt;button class="date-picker-day today"&gt;27&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;!-- Year grid (toggle on month-year click) --&gt;
+  &lt;div class="date-picker-year-grid" style="display:none;"&gt;
+    &lt;div class="date-picker-year-option current"&gt;2026&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- DATE RANGE PICKER -->
+    <div id="daterange" class="demo-section">
+      <h2 class="demo-title">Date Range Picker</h2>
+      <p class="demo-desc">Select a start and end date. Click once for the start date, click again for the end date. The range highlights between them.</p>
+
+      <div class="demo-box">
+        <div class="date-picker" id="dateRangePicker">
+          <div class="date-picker-header">
+            <button class="date-picker-nav" aria-label="Previous month">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 4"/></svg>
+            </button>
+            <span class="date-picker-month-year" id="drpMonthYear" onclick="toggleRangeYearGrid()">February 2026</span>
+            <button class="date-picker-nav" aria-label="Next month">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+          <div id="drpDayView">
+            <div class="date-picker-weekdays">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="date-picker-grid" id="drpDayGrid">
+              <button class="date-picker-day" onclick="selectRangeDay(this)">1</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">2</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">3</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">4</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">5</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">6</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">7</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">8</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">9</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">10</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">11</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">12</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">13</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">14</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">15</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">16</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">17</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">18</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">19</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">20</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">21</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">22</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">23</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">24</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">25</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">26</button>
+              <button class="date-picker-day today" onclick="selectRangeDay(this)">27</button>
+              <button class="date-picker-day" onclick="selectRangeDay(this)">28</button>
+            </div>
+          </div>
+          <div id="drpYearView" style="display:none;">
+            <div class="date-picker-year-grid" id="drpYearGrid"></div>
+          </div>
+          <div class="date-range-display" id="drpDisplay"></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Booking dates, report date ranges, or filtering by time period.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Only a single date is needed — use the standard date picker.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="date-picker" id="dateRangePicker"&gt;
+  &lt;div class="date-picker-header"&gt;
+    &lt;button class="date-picker-nav"&gt;...&lt;/button&gt;
+    &lt;span class="date-picker-month-year"&gt;February 2026&lt;/span&gt;
+    &lt;button class="date-picker-nav"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="date-picker-weekdays"&gt;...&lt;/div&gt;
+  &lt;div class="date-picker-grid" id="drpDayGrid"&gt;
+    &lt;button class="date-picker-day" onclick="selectRangeDay(this)"&gt;1&lt;/button&gt;
+    &lt;!-- ... --&gt;
+  &lt;/div&gt;
+  &lt;div class="date-range-display" id="drpDisplay"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- JS: click first day = start, click second day = end, highlights range --&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- MONTH/YEAR PICKER -->
+    <div id="monthyear" class="demo-section">
+      <h2 class="demo-title">Month / Year Picker</h2>
+      <p class="demo-desc">Select a month and year without day-level precision. Useful for billing periods, report filters, and expiry dates.</p>
+
+      <div class="demo-box">
+        <div class="date-picker" id="monthYearPicker">
+          <div class="date-picker-header">
+            <button class="date-picker-nav" aria-label="Previous year" onclick="changeMonthPickerYear(-1)">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 4"/></svg>
+            </button>
+            <span class="date-picker-month-year" id="mpYearLabel">2026</span>
+            <button class="date-picker-nav" aria-label="Next year" onclick="changeMonthPickerYear(1)">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+          <div class="month-picker-grid" id="mpGrid"></div>
+          <div class="month-picker-display" id="mpDisplay"></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Billing periods, credit card expiry, monthly report filters.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Specific day selection matters — use the full date picker.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="date-picker" id="monthYearPicker"&gt;
+  &lt;div class="date-picker-header"&gt;
+    &lt;button class="date-picker-nav" onclick="changeMonthPickerYear(-1)"&gt;...&lt;/button&gt;
+    &lt;span class="date-picker-month-year" id="mpYearLabel"&gt;2026&lt;/span&gt;
+    &lt;button class="date-picker-nav" onclick="changeMonthPickerYear(1)"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="month-picker-grid" id="mpGrid"&gt;
+    &lt;!-- Built by JS: 12 .month-picker-option buttons --&gt;
+  &lt;/div&gt;
+  &lt;div class="month-picker-display" id="mpDisplay"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- TIME PICKER -->
+    <div id="timepicker" class="demo-section">
+      <h2 class="demo-title">Time Picker</h2>
+      <p class="demo-desc">Typed time input with constrained fields for hours (1–12), minutes (00–59), and AM/PM.</p>
+
+      <div class="demo-box">
+        <div class="time-picker" id="timePicker" style="display:inline-flex;align-items:center;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M8 5v3.5l2.5 1.5"/>
+          </svg>
+          <input type="text" class="field-input" id="timeHour" value="09" maxlength="2"
+            style="width:44px;text-align:center;padding:8px 4px;font-size:0.95rem;"
+            oninput="validateTimeField(this,'hour')" onblur="formatTimeField(this,'hour')">
+          <span style="font-weight:600;color:var(--text-muted);font-size:1.1rem;">:</span>
+          <input type="text" class="field-input" id="timeMin" value="30" maxlength="2"
+            style="width:44px;text-align:center;padding:8px 4px;font-size:0.95rem;"
+            oninput="validateTimeField(this,'min')" onblur="formatTimeField(this,'min')">
+          <select class="field-input" id="timePeriod"
+            style="width:62px;text-align:center;padding:8px 4px;font-size:0.95rem;appearance:none;-webkit-appearance:none;cursor:pointer;">
+            <option value="AM" selected>AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Selecting a specific time with hours, minutes, and period.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Time precision beyond minutes is needed — use a text field with validation.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="time-picker" style="display:inline-flex;align-items:center;gap:4px;"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+  &lt;input type="text" class="field-input" id="timeHour" value="09"
+    maxlength="2" oninput="validateTimeField(this,'hour')"
+    onblur="formatTimeField(this,'hour')"&gt;
+  &lt;span&gt;:&lt;/span&gt;
+  &lt;input type="text" class="field-input" id="timeMin" value="30"
+    maxlength="2" oninput="validateTimeField(this,'min')"
+    onblur="formatTimeField(this,'min')"&gt;
+  &lt;select class="field-input" id="timePeriod"&gt;
+    &lt;option value="AM"&gt;AM&lt;/option&gt;
+    &lt;option value="PM"&gt;PM&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- PICKLIST -->
+    <div id="picklist" class="demo-section">
+      <h2 class="demo-title">Picklist</h2>
+      <p class="demo-desc">Single-select dropdown with integrated search for long option lists.</p>
+
+      <div class="demo-box">
+        <div class="picklist" id="picklist1">
+          <button type="button" class="picklist-trigger" onclick="togglePicklist('picklist1')">
+            <span id="picklist1-value" style="color:var(--text-dim);">Select a framework...</span>
+            <svg class="picklist-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6l4 4 4-4"/>
+            </svg>
+          </button>
+          <div class="picklist-dropdown">
+            <div class="picklist-search-wrap">
+              <input type="text" class="picklist-search" placeholder="Search..." oninput="filterPicklist('picklist1',this.value)" onclick="event.stopPropagation()">
+            </div>
+            <div class="picklist-options" id="picklist1-options">
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'React')">React</div>
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'Vue')">Vue</div>
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'Angular')">Angular</div>
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'Svelte')">Svelte</div>
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'Solid')">Solid</div>
+              <div class="picklist-option" onclick="selectPicklistOption('picklist1',this,'Preact')">Preact</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Long option lists needing search filtering.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Few options (under 5) — use radio buttons or select.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="picklist" id="myPicklist"&gt;
+  &lt;button type="button" class="picklist-trigger" onclick="togglePicklist('myPicklist')"&gt;
+    &lt;span&gt;Select a framework...&lt;/span&gt;
+    &lt;svg class="picklist-chevron" ...&gt;&lt;/svg&gt;
+  &lt;/button&gt;
+  &lt;div class="picklist-dropdown"&gt;
+    &lt;div class="picklist-search-wrap"&gt;
+      &lt;input type="text" class="picklist-search" placeholder="Search..."
+        oninput="filterPicklist('myPicklist', this.value)"&gt;
+    &lt;/div&gt;
+    &lt;div class="picklist-options"&gt;
+      &lt;div class="picklist-option" onclick="selectPicklistOption('myPicklist',this,'React')"&gt;React&lt;/div&gt;
+      &lt;div class="picklist-option" onclick="selectPicklistOption('myPicklist',this,'Vue')"&gt;Vue&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- MULTISELECT PICKLIST -->
+    <div id="multiselect" class="demo-section">
+      <h2 class="demo-title">Multiselect Picklist</h2>
+      <p class="demo-desc">Multi-select dropdown with tags and search. Dropdown stays open between selections.</p>
+
+      <div class="demo-box">
+        <div class="picklist picklist-multi" id="picklist2">
+          <div class="picklist-trigger" onclick="togglePicklist('picklist2')" style="cursor:pointer;">
+            <div id="picklist2-tags" style="display:flex;flex-wrap:wrap;gap:6px;flex:1;align-items:center;">
+              <span class="picklist-tag" data-value="React">
+                React
+                <button type="button" class="picklist-tag-remove" onclick="removeTag('picklist2','React',event)">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"/></svg>
+                </button>
+              </span>
+              <span class="picklist-tag" data-value="TypeScript">
+                TypeScript
+                <button type="button" class="picklist-tag-remove" onclick="removeTag('picklist2','TypeScript',event)">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"/></svg>
+                </button>
+              </span>
+            </div>
+            <svg class="picklist-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6l4 4 4-4"/>
+            </svg>
+          </div>
+          <div class="picklist-dropdown">
+            <div class="picklist-search-wrap">
+              <input type="text" class="picklist-search" placeholder="Search..." oninput="filterPicklist('picklist2',this.value)" onclick="event.stopPropagation()">
+            </div>
+            <div class="picklist-options" id="picklist2-options">
+              <div class="picklist-option selected" data-value="React" onclick="toggleMultiOption('picklist2',this,'React')">React</div>
+              <div class="picklist-option" data-value="Vue" onclick="toggleMultiOption('picklist2',this,'Vue')">Vue</div>
+              <div class="picklist-option" data-value="Angular" onclick="toggleMultiOption('picklist2',this,'Angular')">Angular</div>
+              <div class="picklist-option selected" data-value="TypeScript" onclick="toggleMultiOption('picklist2',this,'TypeScript')">TypeScript</div>
+              <div class="picklist-option" data-value="Svelte" onclick="toggleMultiOption('picklist2',this,'Svelte')">Svelte</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Selecting multiple items from a long list with search.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Few options (under 5) — use checkboxes instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="picklist picklist-multi" id="picklist2"&gt;
+  &lt;div class="picklist-trigger" onclick="togglePicklist('picklist2')"&gt;
+    &lt;div id="picklist2-tags"&gt;
+      &lt;span class="picklist-tag" data-value="React"&gt;
+        React
+        &lt;button class="picklist-tag-remove" onclick="removeTag('picklist2','React',event)"&gt;...&lt;/button&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+    &lt;svg class="picklist-chevron" ...&gt;...&lt;/svg&gt;
+  &lt;/div&gt;
+  &lt;div class="picklist-dropdown"&gt;
+    &lt;div class="picklist-options"&gt;
+      &lt;!-- CSS ::before provides checkbox visual; no input[type="checkbox"] needed --&gt;
+      &lt;div class="picklist-option" data-value="React" onclick="toggleMultiOption('picklist2',this,'React')"&gt;React&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Date picker — day select
+  function selectDay(el) {
+    el.closest('.date-picker-grid').querySelectorAll('.date-picker-day').forEach(d => {
+      d.classList.remove('active');
+    });
+    el.classList.add('active');
+  }
+
+  // Date picker — year grid toggle
+  var dpCurrentYear = 2026;
+  function toggleYearGrid() {
+    var dayView = document.getElementById('dpDayView');
+    var yearView = document.getElementById('dpYearView');
+    var isYearVisible = yearView.style.display !== 'none';
+    if (isYearVisible) {
+      yearView.style.display = 'none';
+      dayView.style.display = '';
+    } else {
+      buildYearGrid();
+      dayView.style.display = 'none';
+      yearView.style.display = '';
+    }
+  }
+
+  function buildYearGrid() {
+    var grid = document.getElementById('dpYearGrid');
+    grid.innerHTML = '';
+    var startYear = dpCurrentYear - 6;
+    for (var y = startYear; y <= startYear + 11; y++) {
+      var opt = document.createElement('div');
+      opt.className = 'date-picker-year-option' + (y === dpCurrentYear ? ' current' : '');
+      opt.textContent = y;
+      opt.dataset.year = y;
+      opt.onclick = function() { selectYear(this); };
+      grid.appendChild(opt);
+    }
+  }
+
+  function selectYear(el) {
+    dpCurrentYear = parseInt(el.dataset.year, 10);
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('dpMonthYear').textContent = months[1] + ' ' + dpCurrentYear;
+    document.getElementById('dpYearView').style.display = 'none';
+    document.getElementById('dpDayView').style.display = '';
+  }
+
+  // Date Range Picker
+  var rangeState = { start: null, end: null };
+
+  function selectRangeDay(el) {
+    var day = parseInt(el.textContent);
+    if (!rangeState.start || rangeState.end) {
+      // First click or reset
+      rangeState = { start: day, end: null };
+    } else if (day < rangeState.start) {
+      rangeState = { start: day, end: null };
+    } else {
+      rangeState.end = day;
+    }
+    updateRangeHighlight();
+  }
+
+  function updateRangeHighlight() {
+    var grid = document.getElementById('drpDayGrid');
+    grid.querySelectorAll('.date-picker-day').forEach(function(btn) {
+      var d = parseInt(btn.textContent);
+      btn.classList.remove('range-start', 'range-end', 'in-range', 'active');
+      if (rangeState.start && d === rangeState.start) btn.classList.add('range-start');
+      if (rangeState.end && d === rangeState.end) btn.classList.add('range-end');
+      if (rangeState.start && rangeState.end && d > rangeState.start && d < rangeState.end) btn.classList.add('in-range');
+    });
+    var display = document.getElementById('drpDisplay');
+    if (rangeState.start && rangeState.end) {
+      display.textContent = 'Feb ' + rangeState.start + ' \u2013 Feb ' + rangeState.end;
+    } else if (rangeState.start) {
+      display.textContent = 'Feb ' + rangeState.start + ' \u2013 ...';
+    } else {
+      display.textContent = '';
+    }
+  }
+
+  // Date Range Picker — year grid toggle
+  var drpCurrentYear = 2026;
+  function toggleRangeYearGrid() {
+    var dayView = document.getElementById('drpDayView');
+    var yearView = document.getElementById('drpYearView');
+    var isYearVisible = yearView.style.display !== 'none';
+    if (isYearVisible) {
+      yearView.style.display = 'none';
+      dayView.style.display = '';
+    } else {
+      buildRangeYearGrid();
+      dayView.style.display = 'none';
+      yearView.style.display = '';
+    }
+  }
+
+  function buildRangeYearGrid() {
+    var grid = document.getElementById('drpYearGrid');
+    grid.innerHTML = '';
+    var startYear = drpCurrentYear - 6;
+    for (var y = startYear; y <= startYear + 11; y++) {
+      var opt = document.createElement('div');
+      opt.className = 'date-picker-year-option' + (y === drpCurrentYear ? ' current' : '');
+      opt.textContent = y;
+      opt.dataset.year = y;
+      opt.onclick = function() { selectRangeYear(this); };
+      grid.appendChild(opt);
+    }
+  }
+
+  function selectRangeYear(el) {
+    drpCurrentYear = parseInt(el.dataset.year, 10);
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('drpMonthYear').textContent = months[1] + ' ' + drpCurrentYear;
+    document.getElementById('drpYearView').style.display = 'none';
+    document.getElementById('drpDayView').style.display = '';
+  }
+
+  // Month/Year Picker
+  var mpMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var mpFullMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var mpYear = 2026;
+  var mpSelectedMonth = null;
+  var mpSelectedYear = null;
+  var mpCurrentMonth = 1; // February (0-indexed)
+
+  function buildMonthGrid() {
+    var grid = document.getElementById('mpGrid');
+    grid.innerHTML = '';
+    for (var i = 0; i < 12; i++) {
+      var opt = document.createElement('div');
+      opt.className = 'month-picker-option';
+      if (mpSelectedMonth === i && mpSelectedYear === mpYear) opt.className += ' active';
+      if (mpYear === 2026 && i === mpCurrentMonth) opt.className += ' current';
+      opt.textContent = mpMonths[i];
+      opt.dataset.month = i;
+      opt.onclick = function() { selectMonth(this); };
+      grid.appendChild(opt);
+    }
+    document.getElementById('mpYearLabel').textContent = mpYear;
+  }
+
+  function changeMonthPickerYear(delta) {
+    mpYear += delta;
+    buildMonthGrid();
+  }
+
+  function selectMonth(el) {
+    mpSelectedMonth = parseInt(el.dataset.month, 10);
+    mpSelectedYear = mpYear;
+    buildMonthGrid();
+    document.getElementById('mpDisplay').textContent = mpFullMonths[mpSelectedMonth] + ' ' + mpSelectedYear;
+  }
+
+  buildMonthGrid();
+
+  // Picklist
+  function togglePicklist(id) {
+    const pl = document.getElementById(id);
+    const isOpen = pl.classList.contains('open');
+    document.querySelectorAll('.picklist.open').forEach(p => p.classList.remove('open'));
+    if (!isOpen) pl.classList.add('open');
+  }
+
+  function filterPicklist(id, query) {
+    const opts = document.querySelectorAll('#' + id + '-options .picklist-option');
+    const q = query.toLowerCase();
+    opts.forEach(opt => {
+      opt.classList.toggle('hidden', !opt.textContent.trim().toLowerCase().includes(q));
+    });
+  }
+
+  function selectPicklistOption(id, el, value) {
+    const pl = document.getElementById(id);
+    pl.querySelectorAll('.picklist-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    const valueEl = document.getElementById(id + '-value');
+    valueEl.textContent = value;
+    valueEl.style.color = 'var(--text)';
+    pl.classList.remove('open');
+  }
+
+  // Multiselect picklist
+  function toggleMultiOption(id, el, value) {
+    const isSelected = el.classList.contains('selected');
+    el.classList.toggle('selected', !isSelected);
+    if (!isSelected) {
+      addTag(id, value);
+    } else {
+      removeTagEl(id, value);
+    }
+  }
+
+  function addTag(id, value) {
+    const tagsEl = document.getElementById(id + '-tags');
+    if (tagsEl.querySelector('[data-value="' + value + '"]')) return;
+    const tag = document.createElement('span');
+    tag.className = 'picklist-tag';
+    tag.dataset.value = value;
+    tag.innerHTML = value + '<button type="button" class="picklist-tag-remove" onclick="removeTag(\'' + id + '\',\'' + value + '\',event)"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"/></svg></button>';
+    tagsEl.appendChild(tag);
+  }
+
+  function removeTag(id, value, event) {
+    event.stopPropagation();
+    removeTagEl(id, value);
+    const opt = document.querySelector('#' + id + '-options [data-value="' + value + '"]');
+    if (opt) opt.classList.remove('selected');
+  }
+
+  function removeTagEl(id, value) {
+    const tagsEl = document.getElementById(id + '-tags');
+    const tag = tagsEl.querySelector('[data-value="' + value + '"]');
+    if (tag) tag.remove();
+  }
+
+  // Time picker — typed input validation
+  function validateTimeField(input, type) {
+    var val = input.value.replace(/[^0-9]/g, '');
+    if (type === 'hour') {
+      if (val.length > 2) val = val.slice(0, 2);
+      var num = parseInt(val, 10);
+      if (num > 12) val = '12';
+      if (num < 0) val = '';
+    } else {
+      if (val.length > 2) val = val.slice(0, 2);
+      var num = parseInt(val, 10);
+      if (num > 59) val = '59';
+      if (num < 0) val = '';
+    }
+    input.value = val;
+  }
+
+  function formatTimeField(input, type) {
+    var val = input.value.replace(/[^0-9]/g, '');
+    var num = parseInt(val, 10);
+    if (type === 'hour') {
+      if (isNaN(num) || num < 1) num = 1;
+      if (num > 12) num = 12;
+      input.value = num.toString().padStart(2, '0');
+    } else {
+      if (isNaN(num) || num < 0) num = 0;
+      if (num > 59) num = 59;
+      input.value = num.toString().padStart(2, '0');
+    }
+  }
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.picklist')) {
+      document.querySelectorAll('.picklist.open').forEach(p => p.classList.remove('open'));
+    }
+    if (!e.target.closest('.date-picker')) {
+      // year grid stays open unless user clicks outside
+    }
+  });
+
+  // Escape key closes
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.picklist.open').forEach(p => p.classList.remove('open'));
+    }
+  });
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

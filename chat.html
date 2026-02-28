@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+.main { padding: 0; max-width: none; display: flex; height: 100vh; overflow: hidden; }
+.chat-list-pane { width: 280px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; background: var(--bg-warm); }
+.chat-list-header { padding: 20px 16px 12px; }
+.chat-list-header h2 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 400; margin-bottom: 12px; }
+.chat-list-scroll { overflow-y: auto; flex: 1; }
+.conv-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; transition: background 0.14s; border-bottom: 1px solid var(--border); position: relative; }
+.conv-item:hover { background: var(--white); }
+.conv-item.active { background: var(--white); }
+.conv-avatar-wrap { position: relative; flex-shrink: 0; }
+.online-dot { position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%; background: var(--success); border: 2px solid var(--bg-warm); }
+.offline-dot { background: var(--text-dim); }
+.conv-meta { flex: 1; min-width: 0; }
+.conv-name { font-size: 0.87rem; font-weight: 600; color: var(--text); }
+.conv-preview { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.conv-time { font-size: 0.72rem; color: var(--text-dim); white-space: nowrap; }
+.conv-unread { position: absolute; right: 14px; bottom: 14px; }
+
+.chat-thread { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.thread-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; background: var(--white); }
+.thread-title { font-weight: 600; font-size: 0.95rem; }
+.thread-status { font-size: 0.78rem; color: var(--success); }
+.thread-actions { margin-left: auto; display: flex; gap: 4px; }
+
+.messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 4px; }
+.msg-day-group { text-align: center; margin: 16px 0 12px; }
+.msg-day-label { display: inline-block; font-size: 0.72rem; color: var(--text-muted); background: var(--bg-warm); padding: 3px 12px; border-radius: var(--radius-full); }
+.msg-row { display: flex; gap: 10px; margin-bottom: 4px; align-items: flex-end; }
+.msg-row.mine { flex-direction: row-reverse; }
+.bubble { max-width: 420px; padding: 10px 14px; border-radius: var(--radius); font-size: 0.88rem; line-height: 1.55; }
+.bubble-theirs { background: var(--white); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: var(--radius-xs); }
+.bubble-mine { background: var(--accent); color: var(--white); border-bottom-right-radius: var(--radius-xs); }
+.msg-time { font-size: 0.68rem; color: var(--text-dim); margin-bottom: 2px; padding: 0 4px; }
+.msg-avatar-spacer { width: 28px; flex-shrink: 0; }
+
+.typing-indicator { display: flex; align-items: center; gap: 10px; padding: 10px 24px; background: var(--bg-warm); border-top: 1px solid var(--border); }
+.typing-dots { display: flex; gap: 4px; align-items: center; background: var(--bg-warm); border: 1px solid var(--border); padding: 10px 14px; border-radius: var(--radius); }
+.typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); animation: typingBounce 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+.typing-name { font-size: 0.75rem; color: var(--text-muted); }
+
+.chat-input-bar { padding: 16px 24px; border-top: 1px solid var(--border); background: var(--white); display: flex; gap: 10px; align-items: flex-end; }
+.chat-input-wrap { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-sm); transition: border-color 0.2s; }
+.chat-input-wrap:focus-within { border-color: var(--accent); box-shadow: var(--shadow-focus); }
+.chat-input { width: 100%; padding: 10px 14px; border: none; outline: none; background: transparent; font-family: var(--font-body); font-size: 0.88rem; color: var(--text); resize: none; max-height: 120px; }
+.chat-input::placeholder { color: var(--text-dim); }
+.input-toolbar { display: flex; gap: 2px; padding: 4px 8px; border-top: 1px solid var(--border); }
+.thread-back-btn { display: none; }
+@media (max-width: 860px) {
+  .chat-list-pane { width: 100%; border-right: none; flex: 1; max-height: none; }
+  .chat-thread { display: none; }
+  .main.show-thread .chat-list-pane { display: none; }
+  .main.show-thread .chat-thread { display: flex; flex: 1; min-height: 0; }
+  .thread-back-btn { display: flex; }
+  .messages { padding: 16px; }
+  .bubble { max-width: 85vw; word-break: break-word; }
+  .thread-header { padding: 12px 16px; }
+  .chat-input-bar { padding: 12px 16px; }
+  .thread-actions { flex-wrap: wrap; gap: 2px; }
+}
+@media (max-width: 480px) {
+  .typing-indicator { padding: 0 16px 12px; }
+  .typing-name { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main">
+    <!-- Components: avatar, avatar-sm, avatar-md, avatar-accent, avatar-highlight, avatar-info, avatar-success, badge, badge-accent, btn, btn-primary, btn-ghost, btn-sm, search-bar -->
+    <!-- Conversation list -->
+    <aside class="chat-list-pane">
+      <div class="chat-list-header">
+        <h2>Messages</h2>
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search conversations…">
+        </div>
+      </div>
+      <div class="chat-list-scroll">
+        <div class="conv-item active" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-accent">SR</div>
+            <span class="online-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Sarah Reynolds</div>
+            <div class="conv-preview">Sounds great, let's sync tomorrow <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+          </div>
+          <div class="conv-time">10:42</div>
+          <div class="conv-unread"><span class="badge badge-accent">3</span></div>
+        </div>
+        <div class="conv-item" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-info">MK</div>
+            <span class="online-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Marcus Kim</div>
+            <div class="conv-preview">I'll push the branch today</div>
+          </div>
+          <div class="conv-time">9:18</div>
+        </div>
+        <div class="conv-item" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-highlight">AL</div>
+            <span class="online-dot offline-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Amara Levi</div>
+            <div class="conv-preview">Invoice attached, thanks!</div>
+          </div>
+          <div class="conv-time">Yesterday</div>
+        </div>
+        <div class="conv-item" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-success">TN</div>
+            <span class="online-dot offline-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Tom Nguyen</div>
+            <div class="conv-preview">Can we chat about the spec?</div>
+          </div>
+          <div class="conv-time">Yesterday</div>
+          <div class="conv-unread"><span class="badge badge-accent">1</span></div>
+        </div>
+        <div class="conv-item" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-accent">OC</div>
+            <span class="online-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Olivia Chen</div>
+            <div class="conv-preview">Meeting rescheduled to 3pm ✓</div>
+          </div>
+          <div class="conv-time">Mon</div>
+        </div>
+        <div class="conv-item" onclick="selectConv(this)">
+          <div class="conv-avatar-wrap">
+            <div class="avatar avatar-md avatar-info">NP</div>
+            <span class="online-dot offline-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Nadia Park</div>
+            <div class="conv-preview">Budget approved <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          </div>
+          <div class="conv-time">Mon</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Message thread -->
+    <div class="chat-thread">
+      <div class="thread-header">
+        <button class="btn btn-ghost btn-sm thread-back-btn" onclick="document.querySelector('.main').classList.remove('show-thread')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <div class="avatar avatar-md avatar-accent">SR</div>
+        <div>
+          <div class="thread-title">Sarah Reynolds</div>
+          <div class="thread-status">● Online</div>
+        </div>
+        <div class="thread-actions">
+          <button class="btn btn-ghost btn-sm" title="Call">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14z"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" title="Video">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" title="Info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="msg-day-group"><span class="msg-day-label">Monday, Feb 24</span></div>
+
+        <div class="msg-row">
+          <div class="avatar avatar-sm avatar-accent">SR</div>
+          <div>
+            <div class="bubble bubble-theirs">Hey! Did you get a chance to look at the Q4 deck I sent over?</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-avatar-spacer"></div>
+          <div><div class="bubble bubble-theirs">I made some updates based on last week's feedback session.</div></div>
+        </div>
+
+        <div class="msg-row mine">
+          <div class="avatar avatar-sm avatar-highlight">JD</div>
+          <div>
+            <div class="bubble bubble-mine">Yes, just opened it! The revisions look really solid.</div>
+          </div>
+        </div>
+        <div class="msg-row mine">
+          <div class="msg-avatar-spacer"></div>
+          <div><div class="bubble bubble-mine">The new component section on slides 18–22 is exactly what we needed.</div></div>
+        </div>
+
+        <div class="msg-row">
+          <div class="avatar avatar-sm avatar-accent">SR</div>
+          <div><div class="bubble bubble-theirs">So glad! I was worried the layout felt too dense.</div></div>
+        </div>
+
+        <div class="msg-day-group"><span class="msg-day-label">Today</span></div>
+
+        <div class="msg-row">
+          <div class="avatar avatar-sm avatar-accent">SR</div>
+          <div><div class="bubble bubble-theirs">Quick update — I've locked the deck for Thursday. Are you presenting the first section?</div></div>
+        </div>
+
+        <div class="msg-row mine">
+          <div class="avatar avatar-sm avatar-highlight">JD</div>
+          <div><div class="bubble bubble-mine">Yes, I'll handle the intro and the competitive analysis part.</div></div>
+        </div>
+        <div class="msg-row mine">
+          <div class="msg-avatar-spacer"></div>
+          <div><div class="bubble bubble-mine">Sounds great, let's sync tomorrow for a quick run-through <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div></div>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator">
+        <div class="avatar avatar-sm avatar-accent">SR</div>
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+        <span class="typing-name">Sarah is typing…</span>
+      </div>
+
+      <!-- Input bar -->
+      <div class="chat-input-bar">
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" rows="1" placeholder="Message Sarah…" id="chat-input" onkeydown="handleEnter(event)"></textarea>
+          <div class="input-toolbar">
+            <button class="btn btn-ghost btn-sm" title="Attach">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+            </button>
+            <button class="btn btn-ghost btn-sm" title="Emoji">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="sendMessage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="sidebar.js"></script>
+<script>
+function selectConv(item) {
+  document.querySelectorAll('.conv-item').forEach(i => i.classList.remove('active'));
+  item.classList.add('active');
+  const badge = item.querySelector('.conv-unread');
+  if (badge) badge.style.display = 'none';
+  document.querySelector('.main').classList.add('show-thread');
+}
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const messages = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row mine';
+  row.innerHTML = `<div class="avatar avatar-sm avatar-highlight">JD</div><div><div class="bubble bubble-mine">${text}</div></div>`;
+  messages.appendChild(row);
+  input.value = '';
+  messages.scrollTop = messages.scrollHeight;
+}
+function handleEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

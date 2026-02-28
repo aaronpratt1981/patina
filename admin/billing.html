@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing — My Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-system.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:860px;">
+    <!-- Components: page-alert, stats-row, card, data-table, badge, chip, strength-bar -->
+
+    <div class="page-alert alert-warning">
+      <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div class="alert-body"><strong>DevOps trial expires in 3 days</strong><span>Add a paid plan for Patina DevOps to keep your pipelines running after March 1.</span></div>
+      <button class="btn btn-sm" style="background:var(--warning);color:white;flex-shrink:0;">Upgrade DevOps</button>
+      <button class="alert-dismiss" onclick="this.parentElement.style.display='none'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+
+    <div class="breadcrumbs mb-16">
+      <a class="breadcrumb-item" href="home.html">Home</a>
+      <span class="breadcrumb-item">Billing</span>
+    </div>
+
+    <div class="main-header">
+      <h1 class="main-title">Billing</h1>
+      <p class="main-subtitle">Manage your plans, payment methods, and invoices.</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-row mb-32">
+      <div class="card" style="padding:20px 24px;">
+        <div class="billing-stat-label">Monthly Total</div>
+        <div class="billing-stat-value">$68.00</div>
+      </div>
+      <div class="card" style="padding:20px 24px;">
+        <div class="billing-stat-label">Next Billing</div>
+        <div class="billing-stat-value">Mar 15</div>
+      </div>
+      <div class="card" style="padding:20px 24px;">
+        <div class="billing-stat-label">Active Plans</div>
+        <div class="billing-stat-value">2 <span style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-body);">+ 1 trial</span></div>
+      </div>
+      <div class="card" style="padding:20px 24px;">
+        <div class="billing-stat-label">Total Seats</div>
+        <div class="billing-stat-value">17</div>
+      </div>
+    </div>
+
+    <!-- Current Plans -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Current Plans</div><a class="card-action" href="my-apps.html">Manage apps</a></div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr><th>App</th><th>Plan</th><th>Seats</th><th>Price</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg><span class="cell-primary">Patina Studio</span></div></td>
+              <td><span class="chip">Pro</span></td>
+              <td class="cell-mono">12</td>
+              <td class="cell-mono">$49.00/mo</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td><button class="btn btn-ghost btn-sm" style="color:var(--text-muted);">Change plan</button></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg><span class="cell-primary">Patina Analytics</span></div></td>
+              <td><span class="chip">Starter</span></td>
+              <td class="cell-mono">4</td>
+              <td class="cell-mono">$19.00/mo</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td><button class="btn btn-ghost btn-sm" style="color:var(--text-muted);">Change plan</button></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="cell-primary">Patina DevOps</span></div></td>
+              <td><span class="chip chip-filter active">Trial</span></td>
+              <td class="cell-mono">1</td>
+              <td class="cell-mono">$0.00</td>
+              <td><span class="badge badge-warning">Trial · 3d</span></td>
+              <td><button class="btn btn-primary btn-sm">Upgrade</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Payment Method</div></div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid var(--border);">
+        <div style="width:56px;height:36px;background:linear-gradient(135deg,#1a1f71,#2b4acb);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="color:white;font-size:0.65rem;font-weight:800;letter-spacing:0.04em;">VISA</span>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:0.9rem;font-weight:600;">Visa ending in 4242</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);">Expires 08/2028</div>
+        </div>
+        <span class="badge badge-success">Default</span>
+        <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);">Edit</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 0;">
+        <div style="width:56px;height:36px;background:var(--bg-warm);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:0.9rem;font-weight:500;color:var(--text-muted);">Add a backup payment method</div>
+        </div>
+        <button class="btn btn-secondary btn-sm">Add card</button>
+      </div>
+    </div>
+
+    <!-- Billing Address -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Billing Address</div><button class="btn btn-ghost btn-sm card-action" style="color:var(--text-muted);">Edit</button></div>
+      <div style="font-size:0.88rem;line-height:1.7;color:var(--text-secondary);">
+        Jane Doe<br>
+        Acme Corp<br>
+        123 Design Street, Suite 400<br>
+        Brooklyn, NY 11201<br>
+        United States
+      </div>
+    </div>
+
+    <!-- Invoice History -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Invoice History</div><button class="btn btn-ghost btn-sm card-action" style="color:var(--text-muted);">Download all</button></div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="cell-mono" style="font-size:0.82rem;">INV-2026-002</td>
+              <td>Feb 15, 2026</td>
+              <td class="cell-mono">$68.00</td>
+              <td><span class="badge badge-success">Paid</span></td>
+              <td><a style="font-size:0.8rem;font-weight:500;color:var(--accent);cursor:pointer;">PDF</a></td>
+            </tr>
+            <tr>
+              <td class="cell-mono" style="font-size:0.82rem;">INV-2026-001</td>
+              <td>Jan 15, 2026</td>
+              <td class="cell-mono">$68.00</td>
+              <td><span class="badge badge-success">Paid</span></td>
+              <td><a style="font-size:0.8rem;font-weight:500;color:var(--accent);cursor:pointer;">PDF</a></td>
+            </tr>
+            <tr>
+              <td class="cell-mono" style="font-size:0.82rem;">INV-2025-012</td>
+              <td>Dec 15, 2025</td>
+              <td class="cell-mono">$68.00</td>
+              <td><span class="badge badge-success">Paid</span></td>
+              <td><a style="font-size:0.8rem;font-weight:500;color:var(--accent);cursor:pointer;">PDF</a></td>
+            </tr>
+            <tr>
+              <td class="cell-mono" style="font-size:0.82rem;">INV-2025-011</td>
+              <td>Nov 15, 2025</td>
+              <td class="cell-mono">$49.00</td>
+              <td><span class="badge badge-success">Paid</span></td>
+              <td><a style="font-size:0.8rem;font-weight:500;color:var(--accent);cursor:pointer;">PDF</a></td>
+            </tr>
+            <tr>
+              <td class="cell-mono" style="font-size:0.82rem;">INV-2025-010</td>
+              <td>Oct 15, 2025</td>
+              <td class="cell-mono">$49.00</td>
+              <td><span class="badge badge-success">Paid</span></td>
+              <td><a style="font-size:0.8rem;font-weight:500;color:var(--accent);cursor:pointer;">PDF</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Usage This Period -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">Usage — Current Period</div><span class="card-action" style="cursor:default;color:var(--text-dim);">Feb 15 – Mar 15</span></div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <div><span style="font-size:0.85rem;font-weight:600;">Storage</span></div>
+            <span style="font-size:0.82rem;font-family:var(--font-mono);color:var(--text-muted);">18.4 GB / 50 GB</span>
+          </div>
+          <div class="strength-bar">
+            <div class="strength-fill" style="width:37%;background:var(--accent);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <div><span style="font-size:0.85rem;font-weight:600;">API Calls</span></div>
+            <span style="font-size:0.82rem;font-family:var(--font-mono);color:var(--text-muted);">24,819 / 100,000</span>
+          </div>
+          <div class="strength-bar">
+            <div class="strength-fill" style="width:25%;background:var(--info);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <div><span style="font-size:0.85rem;font-weight:600;">Team Members</span></div>
+            <span style="font-size:0.82rem;font-family:var(--font-mono);color:var(--text-muted);">17 / 20</span>
+          </div>
+          <div class="strength-bar">
+            <div class="strength-fill" style="width:85%;background:var(--warning);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="admin-sidebar.js"></script>
+<script src="../inspector.js"></script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Manager — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.file-list-view { display: none; }
+.file-grid-view { display: grid; }
+[data-view="list"] .file-grid-view { display: none; }
+[data-view="list"] .file-list-view { display: block; }
+.file-card { cursor: pointer; padding: 20px 16px; text-align: center; user-select: none; display: flex; flex-direction: column; align-items: center; }
+.file-card:hover { border-color: var(--accent-border); }
+.file-card.selected { border-color: var(--accent); background: var(--accent-bg); }
+.file-icon { font-size: 2.4rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
+.file-name { font-size: 0.88rem; font-weight: 600; color: var(--text); word-break: break-word; line-height: 1.3; margin-bottom: 6px; }
+.file-meta { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+.file-meta-size, .file-meta-date { display: block; }
+.folder-icon { color: var(--warning); }
+.pdf-icon { color: var(--accent); }
+.img-icon { color: var(--info); }
+.doc-icon { color: var(--info); }
+.sheet-icon { color: var(--success); }
+.zip-icon { color: var(--text-muted); }
+.storage-bar { margin-bottom: 6px; }
+.context-menu-wrap { position: relative; }
+.file-name-cell { display: flex; align-items: center; gap: 10px; }
+@media (max-width: 860px) {
+  .toolbar { flex-wrap: wrap; }
+  .toolbar > div[style*="margin-left:auto"] { margin-left: 0 !important; flex-wrap: wrap; width: 100%; }
+  .search-bar[style*="width:220px"] { width: 100% !important; }
+  .file-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .storage-bar + div { flex-wrap: wrap; }
+  .file-list-view th:nth-child(2),
+  .file-list-view td:nth-child(2) { display: none; }
+  .file-list-view .data-table td { padding: 10px 10px; }
+  .file-list-view .data-table th { padding: 10px 10px; }
+}
+@media (max-width: 480px) {
+  .file-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .file-card { padding: 14px 10px; }
+  .file-list-view th:nth-child(4),
+  .file-list-view td:nth-child(4) { display: none; }
+  .file-list-view .data-table td { padding: 8px 6px; font-size: 0.82rem; }
+  .file-list-view .data-table th { padding: 8px 6px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" id="fm-root" data-view="grid">
+    <!-- Components: card, card--flat, card--clickable, file-card, file-grid, file-icon, file-name, file-meta, table-wrapper, data-table, breadcrumbs, chip, chip-filter, search-bar, seg-group, seg-btn, btn, btn-secondary, btn-sm, btn-ghost, fab, menu, menu-item, menu-divider, progress-track, progress-fill, main-header-row, main-title, main-subtitle -->
+    <div class="main-header-row">
+      <div>
+        <h1 class="main-title">File Manager</h1>
+        <p class="main-subtitle">Manage your project assets and documents.</p>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="breadcrumbs">
+        <div class="breadcrumb-item"><a href="#">Root</a></div>
+        <div class="breadcrumb-item"><a href="#">Projects</a></div>
+        <div class="breadcrumb-item">Design Assets</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+        <div class="search-bar" style="width:220px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search files…">
+        </div>
+        <div class="seg-group" id="view-seg">
+          <button class="seg-btn active" onclick="setView('grid', this)" title="Grid view">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </button>
+          <button class="seg-btn" onclick="setView('list', this)" title="List view">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          New Folder
+        </button>
+      </div>
+    </div>
+
+    <!-- Type filter chips -->
+    <div class="chip-bar">
+      <span class="chip chip-filter active" onclick="toggleChip(this)">All Files</span>
+      <span class="chip chip-filter" onclick="toggleChip(this)">Images</span>
+      <span class="chip chip-filter" onclick="toggleChip(this)">Documents</span>
+      <span class="chip chip-filter" onclick="toggleChip(this)">Spreadsheets</span>
+      <span class="chip chip-filter" onclick="toggleChip(this)">Archives</span>
+    </div>
+
+    <!-- Grid View -->
+    <div class="file-grid-view file-grid" id="file-grid">
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-folder')">
+        <div class="file-icon folder-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="file-name">Brand Assets</div>
+        <div class="file-meta"><span class="file-meta-size">18 items</span><span class="file-meta-date">Folder</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-folder')">
+        <div class="file-icon folder-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="file-name">UI Components</div>
+        <div class="file-meta"><span class="file-meta-size">42 items</span><span class="file-meta-date">Folder</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-folder')">
+        <div class="file-icon folder-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="file-name">Mockups v3</div>
+        <div class="file-meta"><span class="file-meta-size">9 items</span><span class="file-meta-date">Folder</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon img-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="file-name">hero-banner.png</div>
+        <div class="file-meta"><span class="file-meta-size">2.4 MB</span><span class="file-meta-date">3 days ago</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon pdf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="file-name">design-brief.pdf</div>
+        <div class="file-meta"><span class="file-meta-size">840 KB</span><span class="file-meta-date">1 week ago</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon sheet-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+        <div class="file-name">metrics-q4.xlsx</div>
+        <div class="file-meta"><span class="file-meta-size">1.1 MB</span><span class="file-meta-date">2 days ago</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon img-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="file-name">logo-full.svg</div>
+        <div class="file-meta"><span class="file-meta-size">48 KB</span><span class="file-meta-date">Today</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon doc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div class="file-name">project-spec.docx</div>
+        <div class="file-meta"><span class="file-meta-size">312 KB</span><span class="file-meta-date">4 days ago</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon zip-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+        <div class="file-name">assets-export.zip</div>
+        <div class="file-meta"><span class="file-meta-size">18.7 MB</span><span class="file-meta-date">Yesterday</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon img-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="file-name">screenshot-01.jpg</div>
+        <div class="file-meta"><span class="file-meta-size">920 KB</span><span class="file-meta-date">Today</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon pdf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="file-name">onboarding-flow.pdf</div>
+        <div class="file-meta"><span class="file-meta-size">2.2 MB</span><span class="file-meta-date">5 days ago</span></div>
+      </div>
+      <div class="card file-card card--clickable" onclick="selectFile(this)" oncontextmenu="showMenu(event, 'ctx-file')">
+        <div class="file-icon sheet-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+        <div class="file-name">budget-2026.xlsx</div>
+        <div class="file-meta"><span class="file-meta-size">640 KB</span><span class="file-meta-date">1 week ago</span></div>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div class="file-list-view">
+      <div class="card card--flat">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Modified</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warning)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Brand Assets</td>
+                <td><span class="chip">Folder</span></td>
+                <td class="cell-mono">—</td>
+                <td class="t-muted t-small">3 days ago</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warning)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> UI Components</td>
+                <td><span class="chip">Folder</span></td>
+                <td class="cell-mono">—</td>
+                <td class="t-muted t-small">1 week ago</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--info)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> hero-banner.png</td>
+                <td><span class="chip chip-filter active">Image</span></td>
+                <td class="cell-mono">2.4 MB</td>
+                <td class="t-muted t-small">3 days ago</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> design-brief.pdf</td>
+                <td><span class="chip chip-filter" style="color:var(--accent);border-color:var(--accent-border);background:var(--accent-bg);">PDF</span></td>
+                <td class="cell-mono">840 KB</td>
+                <td class="t-muted t-small">1 week ago</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success)"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> metrics-q4.xlsx</td>
+                <td><span class="chip chip-filter" style="color:var(--success);border-color:var(--success-border);background:var(--success-bg);">Sheet</span></td>
+                <td class="cell-mono">1.1 MB</td>
+                <td class="t-muted t-small">2 days ago</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+              <tr>
+                <td class="cell-primary file-name-cell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> assets-export.zip</td>
+                <td><span class="chip">Archive</span></td>
+                <td class="cell-mono">18.7 MB</td>
+                <td class="t-muted t-small">Yesterday</td>
+                <td><button class="btn btn-ghost btn-sm">•••</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Context menus -->
+    <div class="menu" id="ctx-file" style="display:none;">
+      <div class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </div>
+      <div class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Share
+      </div>
+      <div class="menu-item">Rename</div>
+      <div class="menu-item">Move to…</div>
+      <div class="menu-item">Copy</div>
+      <hr class="menu-divider">
+      <div class="menu-item" style="color:var(--danger);">Delete</div>
+    </div>
+    <div class="menu" id="ctx-folder" style="display:none;">
+      <div class="menu-item">Open</div>
+      <div class="menu-item">Share</div>
+      <div class="menu-item">Rename</div>
+      <div class="menu-item">Move to…</div>
+      <hr class="menu-divider">
+      <div class="menu-item" style="color:var(--danger);">Delete</div>
+    </div>
+
+    <!-- Storage info -->
+    <div class="card card--flat mt-24">
+      <div class="card-header">
+        <div class="card-title">Storage</div>
+        <span class="t-small t-muted">14.2 GB of 50 GB used</span>
+      </div>
+      <div class="progress-track storage-bar">
+        <div class="progress-fill fill-accent" style="width:28.4%;"></div>
+      </div>
+      <div style="display:flex;gap:20px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+          <span style="width:10px;height:10px;border-radius:2px;background:var(--accent);"></span>Documents · 6.1 GB
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+          <span style="width:10px;height:10px;border-radius:2px;background:var(--info);"></span>Images · 5.8 GB
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+          <span style="width:10px;height:10px;border-radius:2px;background:var(--warning);"></span>Archives · 2.3 GB
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<button class="fab" title="Upload file" onclick="alert('Upload triggered')">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+</button>
+<script src="sidebar.js"></script>
+<script>
+function setView(view, btn) {
+  document.getElementById('fm-root').dataset.view = view;
+  document.querySelectorAll('#view-seg .seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function selectFile(card) {
+  card.classList.toggle('selected');
+}
+function toggleChip(chip) {
+  chip.classList.toggle('active');
+}
+let activeMenu = null;
+function showMenu(e, id) {
+  e.preventDefault();
+  if (activeMenu) activeMenu.style.display = 'none';
+  const menu = document.getElementById(id);
+  menu.style.display = 'block';
+  menu.style.left = e.pageX + 'px';
+  menu.style.top = e.pageY + 'px';
+  activeMenu = menu;
+}
+document.addEventListener('click', () => {
+  if (activeMenu) { activeMenu.style.display = 'none'; activeMenu = null; }
+});
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

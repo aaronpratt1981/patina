@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  .cal-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .cal-nav { display: flex; align-items: center; gap: 12px; }
+  .cal-nav-btn {
+    width: 36px; height: 36px; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
+    background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); transition: all 0.15s; font-size: 1rem;
+  }
+  .cal-nav-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .cal-month { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; min-width: 200px; text-align: center; }
+  /* .cal-views replaced with .seg-group/.seg-btn from design system */
+
+  .cal-grid { border: 1.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--white); }
+  .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--bg-warm); border-bottom: 1px solid var(--border); }
+  .cal-header-cell {
+    padding: 10px; text-align: center; font-size: 0.72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);
+  }
+  .cal-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cal-cell {
+    min-height: 110px; padding: 8px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    transition: background 0.1s; position: relative; overflow: hidden;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-body > .cal-cell:nth-last-child(-n+7) { border-bottom: none; }
+  .cal-cell:hover { background: var(--bg); }
+  .cal-cell.other-month { opacity: 0.35; }
+  .cal-cell.today { background: rgba(181,67,50,0.03); }
+  .cal-cell.today .cal-day { background: var(--accent); color: white; }
+  .cal-day {
+    font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+  }
+  .cal-event {
+    font-size: 0.7rem; font-weight: 500; padding: 3px 6px; border-radius: 4px;
+    margin-bottom: 3px; line-height: 1.3; cursor: pointer; transition: opacity 0.15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cal-event:hover { opacity: 0.8; }
+  .cal-event.accent { background: var(--accent-bg); color: var(--accent); }
+  .cal-event.coral { background: var(--highlight-bg); color: var(--highlight); }
+  .cal-event.indigo { background: var(--info-bg); color: var(--info); }
+  .cal-event.green { background: var(--success-bg); color: var(--success); }
+  .cal-event.amber { background: var(--warning-bg); color: var(--warning); }
+
+  .upcoming-card { margin-top: 24px; }
+  .cal-event-menu-wrap { position: relative; display: block; }
+  .cal-more { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); padding: 1px 4px; display: none; }
+  .cal-dots { display: none; gap: 3px; flex-wrap: wrap; }
+  .cal-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .upcoming-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .upcoming-item:last-child { border-bottom: none; }
+  .upcoming-date {
+    width: 44px; text-align: center; flex-shrink: 0;
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);
+    padding-top: 2px;
+  }
+  .upcoming-date .day { font-size: 1.2rem; font-weight: 500; color: var(--text); line-height: 1; }
+  .upcoming-info { flex: 1; }
+  .upcoming-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+  .upcoming-meta { font-size: 0.78rem; color: var(--text-muted); }
+  @media (max-width: 860px) {
+    .cal-cell { min-height: 72px; padding: 4px; }
+    .cal-day { font-size: 0.7rem; width: 22px; height: 22px; }
+    .cal-event-menu-wrap { display: none; }
+    .cal-dots { display: flex; }
+    .cal-header-cell { font-size: 0.6rem; padding: 6px 2px; }
+    .cal-toolbar { gap: 8px; }
+    .cal-nav { flex-wrap: wrap; gap: 8px; }
+    .cal-month { min-width: 0; font-size: 1.1rem; }
+  }
+  @media (max-width: 480px) {
+    .cal-cell { min-height: 44px; }
+    .cal-more { display: none !important; }
+    .cal-toolbar > div:last-child { flex-wrap: wrap; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:1040px;">
+    <!-- Components: card, badge, badge-highlight, badge-accent, badge-info, badge-warning, btn, btn-primary, btn-ghost, btn-sm, seg-group, seg-btn, menu, menu-item, menu-divider, main-title, main-subtitle, main-header -->
+    <div class="main-header">
+      <h1 class="main-title">Calendar</h1>
+      <p class="main-subtitle">Schedule and deadlines for your projects.</p>
+    </div>
+
+    <div class="cal-toolbar">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="navMonth(-1)">‹</button>
+        <div class="cal-month" id="calMonth">March 2026</div>
+        <button class="cal-nav-btn" onclick="navMonth(1)">›</button>
+        <button class="btn btn-ghost btn-sm" onclick="goToday()">Today</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="seg-group">
+          <button class="seg-btn active">Month</button>
+          <button class="seg-btn">Week</button>
+          <button class="seg-btn">List</button>
+        </div>
+        <button class="btn btn-primary btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New event</button>
+      </div>
+    </div>
+
+    <div class="cal-grid">
+      <div class="cal-header-row">
+        <div class="cal-header-cell">Sun</div>
+        <div class="cal-header-cell">Mon</div>
+        <div class="cal-header-cell">Tue</div>
+        <div class="cal-header-cell">Wed</div>
+        <div class="cal-header-cell">Thu</div>
+        <div class="cal-header-cell">Fri</div>
+        <div class="cal-header-cell">Sat</div>
+      </div>
+      <div class="cal-body" id="calBody"></div>
+    </div>
+
+    <div class="card upcoming-card">
+      <div class="card-header"><div class="card-title">Upcoming</div></div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="day">28</div>Feb</div>
+        <div class="upcoming-info"><div class="upcoming-title">Onboarding email draft due</div><div class="upcoming-meta">Brand Refresh · Priya Sharma</div></div>
+        <span class="badge badge-highlight">Design</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="day">1</div>Mar</div>
+        <div class="upcoming-info"><div class="upcoming-title">Brand guidelines final draft</div><div class="upcoming-meta">Brand Refresh · Sarah Connor</div></div>
+        <span class="badge badge-accent">High</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="day">5</div>Mar</div>
+        <div class="upcoming-info"><div class="upcoming-title">Competitor analysis report</div><div class="upcoming-meta">Strategy · Sarah Connor</div></div>
+        <span class="badge badge-info">Research</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="day">10</div>Mar</div>
+        <div class="upcoming-info"><div class="upcoming-title">Stakeholder review meeting</div><div class="upcoming-meta">Brand Refresh · All team</div></div>
+        <span class="badge badge-warning">Meeting</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+const events = {
+  '2026-3-1':  [{t:'Guidelines draft due', c:'accent'}],
+  '2026-3-3':  [{t:'Team standup', c:'indigo'}],
+  '2026-3-5':  [{t:'Competitor report', c:'coral'}],
+  '2026-3-7':  [{t:'Design review', c:'amber'}],
+  '2026-3-10': [{t:'Stakeholder meeting', c:'accent'},{t:'Sprint planning', c:'indigo'}],
+  '2026-3-12': [{t:'Logo finalization', c:'coral'}],
+  '2026-3-15': [{t:'Q2 roadmap due', c:'amber'}],
+  '2026-3-17': [{t:'Team standup', c:'indigo'}],
+  '2026-3-20': [{t:'Card templates review', c:'coral'}],
+  '2026-3-22': [{t:'All-hands meeting', c:'green'}],
+  '2026-3-25': [{t:'Dark mode PR', c:'accent'}],
+  '2026-3-28': [{t:'Sprint retro', c:'indigo'}],
+  '2026-2-25': [{t:'Today marker', c:'green'}],
+};
+
+let currentYear = 2026, currentMonth = 2; // March (0-indexed in JS but we'll use 1-indexed)
+
+function renderCalendar(year, month) {
+  document.getElementById('calMonth').textContent = new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const body = document.getElementById('calBody');
+  body.innerHTML = '';
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+  const today = new Date();
+
+  // Previous month fill
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const cell = makeCell(d, true, false, year, month - 1);
+    body.appendChild(cell);
+  }
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
+    const cell = makeCell(d, false, isToday, year, month);
+    body.appendChild(cell);
+  }
+  // Next month fill
+  const totalCells = body.children.length;
+  const remaining = (Math.ceil(totalCells / 7) * 7) - totalCells;
+  for (let d = 1; d <= remaining; d++) {
+    const cell = makeCell(d, true, false, year, month + 1);
+    body.appendChild(cell);
+  }
+}
+
+function makeCell(day, otherMonth, isToday, year, month) {
+  const cell = document.createElement('div');
+  cell.className = 'cal-cell' + (otherMonth ? ' other-month' : '') + (isToday ? ' today' : '');
+  cell.innerHTML = `<div class="cal-day">${day}</div>`;
+  const key = `${year}-${month + 1}-${day}`;
+  const colorMap = { accent:'var(--accent)', coral:'var(--highlight)', indigo:'var(--info)', green:'var(--success)', amber:'var(--warning)' };
+  if (events[key] && !otherMonth) {
+    const evts = events[key];
+    evts.forEach((e, idx) => {
+      const menuId = `evtMenu-${key}-${idx}`;
+      cell.innerHTML += `<div class="cal-event-menu-wrap"><div class="cal-event ${e.c}" onclick="toggleEvtMenu('${menuId}',event)">${e.t}</div><div class="menu" id="${menuId}" style="display:none;z-index:100;"><div class="menu-item">View details</div><div class="menu-item">Edit event</div><div class="menu-divider"></div><div class="menu-item" style="color:var(--danger)">Delete</div></div></div>`;
+    });
+    if (evts.length > 2) {
+      cell.innerHTML += `<div class="cal-more">+${evts.length - 2} more</div>`;
+    }
+    const dots = evts.map(e => `<div class="cal-dot" style="background:${colorMap[e.c] || 'var(--text-dim)'}"></div>`).join('');
+    cell.innerHTML += `<div class="cal-dots">${dots}</div>`;
+  }
+  return cell;
+}
+
+function navMonth(dir) {
+  currentMonth += dir;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar(currentYear, currentMonth);
+}
+
+function goToday() {
+  const t = new Date();
+  currentYear = t.getFullYear();
+  currentMonth = t.getMonth();
+  renderCalendar(currentYear, currentMonth);
+}
+
+renderCalendar(currentYear, currentMonth);
+
+function toggleEvtMenu(id, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(id);
+  const isOpen = menu.style.display !== 'none';
+  document.querySelectorAll('.menu').forEach(m => { m.style.display = 'none'; m.style.position = ''; });
+  if (!isOpen) {
+    const trigger = menu.previousElementSibling || menu.parentElement;
+    const rect = trigger.getBoundingClientRect();
+    menu.style.position = 'fixed';
+    menu.style.left = rect.left + 'px';
+    menu.style.top = rect.bottom + 4 + 'px';
+    menu.style.display = 'block';
+    // Flip up if below viewport
+    const menuRect = menu.getBoundingClientRect();
+    if (menuRect.bottom > window.innerHeight - 8) {
+      menu.style.top = (rect.top - menuRect.height - 4) + 'px';
+    }
+    // Shift left if off right edge
+    if (menuRect.right > window.innerWidth - 8) {
+      menu.style.left = (window.innerWidth - menuRect.width - 8) + 'px';
+    }
+  }
+}
+document.addEventListener('click', () => document.querySelectorAll('.menu').forEach(m => m.style.display = 'none'));
+
+// Segmented view button toggle
+document.querySelector('.seg-group').addEventListener('click', e => {
+  const btn = e.target.closest('.seg-btn');
+  if (!btn) return;
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+});
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

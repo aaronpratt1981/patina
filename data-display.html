@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Display — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .skeleton-card-demo {
+    display: flex; gap: 16px;
+  }
+  .skeleton-card-demo .card {
+    flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .skeleton-card-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .skeleton-list-demo {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .skeleton-list-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .skeleton-list-item:last-child { border-bottom: none; }
+  .skeleton-list-text {
+    flex: 1; display: flex; flex-direction: column; gap: 6px;
+  }
+
+  @media (max-width: 860px) {
+    pre { overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+    .table-wrapper { overflow-x: auto; }
+    .skeleton-card-demo { flex-direction: column; }
+    .demo-row { flex-wrap: wrap; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .demo-box { padding: 16px; }
+    .stats-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
+      <div class="top-bar-title">Data Display</div>
+    </div>
+    <!-- Components: data-table, table-wrapper, cell-primary, cell-mono, stat-card, stat-label, stat-value, stat-change, stats-row, avatar, avatar-sm, avatar-md, avatar-lg, avatar-xl, avatar-accent, avatar-highlight, avatar-info, avatar-success, avatar-stack, empty-state, empty-icon, empty-title, empty-desc, skeleton, skeleton-circle, skeleton-text, skeleton-rect, grid-2, icon-box, icon-box-sm, toc, toc-link, section-rule, demo-section, demo-box, demo-label, demo-row, code-panel, usage-block -->
+
+    <div class="main-header">
+      <h1 class="main-title">Data Display</h1>
+      <p class="main-subtitle">Tables, stat cards, avatars, empty states, and skeleton loading patterns.</p>
+    </div>
+
+    <!-- TOC -->
+    <nav class="page-tabs">
+      <a class="page-tab" href="#data-table">Data Table</a>
+      <a class="page-tab" href="#stat-cards">Stat Cards</a>
+      <a class="page-tab" href="#avatars">Avatars</a>
+      <a class="page-tab" href="#empty-states">Empty States</a>
+      <a class="page-tab" href="#skeleton">Skeleton Loading</a>
+    </nav>
+
+    <!-- DATA TABLE -->
+    <section class="demo-section" id="data-table">
+      <div class="demo-title">Data Table</div>
+      <div class="demo-desc">Structured tabular data with sortable columns, status badges, and monospaced numeric values.</div>
+      <div class="demo-box" style="padding:0; overflow:hidden; border-radius:var(--radius-lg);">
+        <div class="table-wrapper">
+          <table class="data-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th style="text-align:right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-primary">Sarah Connor</td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>Admin</td>
+                <td>Jan 2024</td>
+                <td class="cell-mono" style="text-align:right;">$2,400.00</td>
+              </tr>
+              <tr>
+                <td class="cell-primary">Marcus Webb</td>
+                <td><span class="badge badge-warning">Pending</span></td>
+                <td>Editor</td>
+                <td>Mar 2024</td>
+                <td class="cell-mono" style="text-align:right;">$1,200.00</td>
+              </tr>
+              <tr>
+                <td class="cell-primary">Priya Sharma</td>
+                <td><span class="badge badge-neutral">Inactive</span></td>
+                <td>Viewer</td>
+                <td>Aug 2024</td>
+                <td class="cell-mono" style="text-align:right;">$800.00</td>
+              </tr>
+              <tr>
+                <td class="cell-primary">Leon M&#252;ller</td>
+                <td><span class="badge badge-highlight">Suspended</span></td>
+                <td>Editor</td>
+                <td>Nov 2023</td>
+                <td class="cell-mono" style="text-align:right;">$0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Structured data needing sort/filter/compare</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Simple lists of items — use list component</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="table-wrapper"&gt;
+  &lt;table class="data-table"&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Status&lt;/th&gt;
+        &lt;th style="text-align:right;"&gt;Amount&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td class="cell-primary"&gt;Sarah Connor&lt;/td&gt;
+        &lt;td&gt;&lt;span class="badge badge-success"&gt;Active&lt;/span&gt;&lt;/td&gt;
+        &lt;td class="cell-mono" style="text-align:right;"&gt;$2,400.00&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STAT CARDS -->
+    <section class="demo-section" id="stat-cards">
+      <div class="demo-title">Stat Cards</div>
+      <div class="demo-desc">At-a-glance metrics with trend indicators. Use monospaced values and colored change badges for clarity.</div>
+      <div class="stats-row">
+        <div class="card stat-card">
+          <div class="stat-label">Monthly Revenue</div>
+          <div class="stat-value">$12.4k</div>
+          <span class="stat-change up">&#8593; 12% this month</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value">1,847</div>
+          <span class="stat-change up">&#8593; 8% this month</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Churn Rate</div>
+          <div class="stat-value">2.3%</div>
+          <span class="stat-change down">&#8593; 0.4% this month</span>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Open Tickets</div>
+          <div class="stat-value">34</div>
+          <span class="stat-change up">&#8595; 5 this week</span>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Key metrics requiring at-a-glance monitoring</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Detailed data exploration — use tables or charts</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="stats-row"&gt;
+  &lt;div class="card stat-card"&gt;
+    &lt;div class="stat-label"&gt;Monthly Revenue&lt;/div&gt;
+    &lt;div class="stat-value"&gt;$12.4k&lt;/div&gt;
+    &lt;span class="stat-change up"&gt;&amp;#8593; 12% this month&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- AVATARS -->
+    <section class="demo-section" id="avatars">
+      <div class="demo-title">Avatars — Sizes</div>
+      <div class="demo-desc">Four sizes with color variants. Stack multiple avatars with a "+N" overflow indicator.</div>
+      <div class="demo-box">
+        <div class="demo-label">Sizes</div>
+        <div class="demo-row" style="align-items:flex-end; margin-bottom:28px;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="avatar avatar-sm avatar-accent">J</div>
+            <span class="demo-label" style="margin:0;">sm</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="avatar avatar-md avatar-highlight">MK</div>
+            <span class="demo-label" style="margin:0;">md</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="avatar avatar-lg avatar-info">PL</div>
+            <span class="demo-label" style="margin:0;">lg</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="avatar avatar-xl avatar-success">RA</div>
+            <span class="demo-label" style="margin:0;">xl</span>
+          </div>
+        </div>
+        <div class="demo-label">Avatar Stack</div>
+        <div class="avatar-stack">
+          <div class="avatar avatar-md avatar-accent">A</div>
+          <div class="avatar avatar-md avatar-highlight">B</div>
+          <div class="avatar avatar-md avatar-info">C</div>
+          <div class="avatar avatar-md avatar-success">D</div>
+          <div class="avatar avatar-md" style="background:var(--bg-warm); color:var(--text-muted); font-size:0.75rem; font-weight:600;">+4</div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>User/entity identification in lists and headers</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>The entity has a meaningful icon — use icon-box</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;!-- Single avatar --&gt;
+&lt;div class="avatar avatar-sm avatar-accent"&gt;J&lt;/div&gt;
+&lt;div class="avatar avatar-md avatar-highlight"&gt;MK&lt;/div&gt;
+&lt;div class="avatar avatar-lg avatar-info"&gt;PL&lt;/div&gt;
+&lt;div class="avatar avatar-xl avatar-success"&gt;RA&lt;/div&gt;
+
+&lt;!-- Stacked --&gt;
+&lt;div class="avatar-stack"&gt;
+  &lt;div class="avatar avatar-md avatar-accent"&gt;A&lt;/div&gt;
+  &lt;div class="avatar avatar-md avatar-highlight"&gt;B&lt;/div&gt;
+  &lt;div class="avatar avatar-md" style="..."&gt;+4&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- EMPTY STATES -->
+    <section class="demo-section" id="empty-states">
+      <div class="demo-title">Empty States</div>
+      <div class="demo-desc">Placeholder content when a list or view has no data. Include an icon, a short message, and a primary action.</div>
+      <div class="grid-2">
+        <!-- No projects -->
+        <div class="card empty-state">
+          <div class="empty-icon" style="background:var(--accent-bg);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <div class="empty-title">No projects yet</div>
+          <div class="empty-desc">Get started by creating your first project. You can invite collaborators once it's set up.</div>
+          <button class="btn btn-primary btn-sm">Create project</button>
+        </div>
+        <!-- Inbox clear -->
+        <div class="card empty-state">
+          <div class="empty-icon" style="background:var(--info-bg);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="empty-title">Inbox is clear</div>
+          <div class="empty-desc">You've read everything. New messages from teammates and notifications will appear here.</div>
+          <button class="btn btn-primary btn-sm">Compose message</button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>First-run experience or zero-result states</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Loading state — use skeleton instead</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="card empty-state"&gt;
+  &lt;div class="empty-icon" style="background:var(--accent-bg);"&gt;
+    &lt;svg ...&gt;...&lt;/svg&gt;
+  &lt;/div&gt;
+  &lt;div class="empty-title"&gt;No projects yet&lt;/div&gt;
+  &lt;div class="empty-desc"&gt;Get started by creating your first project.&lt;/div&gt;
+  &lt;button class="btn btn-primary btn-sm"&gt;Create project&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- SKELETON LOADING -->
+    <section class="demo-section" id="skeleton">
+      <div class="demo-title">Skeleton Loading</div>
+      <div class="demo-desc">Animated placeholders that match the layout of real content. Reduces perceived load time and prevents layout shift.</div>
+
+      <div class="demo-label">Cards</div>
+      <div class="skeleton-card-demo mb-24">
+        <div class="card">
+          <div class="skeleton-card-row">
+            <div class="skeleton skeleton-circle" style="width:40px; height:40px; flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-text" style="width:55%;"></div>
+              <div class="skeleton skeleton-text" style="width:35%;"></div>
+            </div>
+          </div>
+          <div class="skeleton skeleton-rect" style="height:80px; width:100%;"></div>
+          <div class="skeleton skeleton-text" style="width:80%;"></div>
+          <div class="skeleton skeleton-text"></div>
+        </div>
+        <div class="card">
+          <div class="skeleton-card-row">
+            <div class="skeleton skeleton-circle" style="width:40px; height:40px; flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-text" style="width:60%;"></div>
+              <div class="skeleton skeleton-text" style="width:40%;"></div>
+            </div>
+          </div>
+          <div class="skeleton skeleton-rect" style="height:80px; width:100%;"></div>
+          <div class="skeleton skeleton-text" style="width:70%;"></div>
+          <div class="skeleton skeleton-text"></div>
+        </div>
+      </div>
+
+      <div class="demo-label">List rows</div>
+      <div class="demo-box">
+        <div class="skeleton-list-demo">
+          <div class="skeleton-list-item">
+            <div class="skeleton skeleton-circle" style="width:36px; height:36px; flex-shrink:0;"></div>
+            <div class="skeleton-list-text">
+              <div class="skeleton skeleton-text" style="width:45%;"></div>
+              <div class="skeleton skeleton-text" style="width:30%;"></div>
+            </div>
+            <div class="skeleton skeleton-rect" style="width:56px; height:22px; border-radius:var(--radius-full);"></div>
+          </div>
+          <div class="skeleton-list-item">
+            <div class="skeleton skeleton-circle" style="width:36px; height:36px; flex-shrink:0;"></div>
+            <div class="skeleton-list-text">
+              <div class="skeleton skeleton-text" style="width:55%;"></div>
+              <div class="skeleton skeleton-text" style="width:25%;"></div>
+            </div>
+            <div class="skeleton skeleton-rect" style="width:56px; height:22px; border-radius:var(--radius-full);"></div>
+          </div>
+          <div class="skeleton-list-item">
+            <div class="skeleton skeleton-circle" style="width:36px; height:36px; flex-shrink:0;"></div>
+            <div class="skeleton-list-text">
+              <div class="skeleton skeleton-text" style="width:40%;"></div>
+              <div class="skeleton skeleton-text" style="width:35%;"></div>
+            </div>
+            <div class="skeleton skeleton-rect" style="width:56px; height:22px; border-radius:var(--radius-full);"></div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Content is loading and layout is known</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Layout is dynamic — use a simple spinner</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;!-- Circle --&gt;
+&lt;div class="skeleton skeleton-circle" style="width:40px; height:40px;"&gt;&lt;/div&gt;
+
+&lt;!-- Text line --&gt;
+&lt;div class="skeleton skeleton-text" style="width:55%;"&gt;&lt;/div&gt;
+
+&lt;!-- Block --&gt;
+&lt;div class="skeleton skeleton-rect" style="height:80px; width:100%;"&gt;&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+
+
+  </main>
+</div>
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

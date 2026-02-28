@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Components — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+
+  /* AI Chat Window */
+  .ai-chat { display: flex; flex-direction: column; height: 480px; border-radius: var(--radius); border: 1.5px solid var(--border); overflow: hidden; background: var(--bg); }
+  .ai-chat-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--white); border-bottom: 1px solid var(--border); }
+  .ai-chat-avatar { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--info-bg); color: var(--info); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ai-chat-info { flex: 1; }
+  .ai-chat-name { font-size: 0.88rem; font-weight: 600; }
+  .ai-chat-status { font-size: 0.72rem; color: var(--text-muted); }
+  .ai-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .ai-msg { display: flex; gap: 10px; align-items: flex-start; max-width: 85%; }
+  .ai-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .ai-msg-avatar { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.7rem; font-weight: 600; }
+  .ai-msg-avatar.ai { background: var(--info-bg); color: var(--info); }
+  .ai-msg-avatar.human { background: var(--accent-bg); color: var(--accent); }
+  .ai-msg-bubble { padding: 10px 14px; border-radius: var(--radius); font-size: 0.88rem; line-height: 1.55; }
+  .ai-msg.assistant .ai-msg-bubble { background: var(--white); border: 1px solid var(--border); color: var(--text); }
+  .ai-msg.user .ai-msg-bubble { background: var(--accent); color: white; }
+  .ai-msg-meta { font-size: 0.68rem; color: var(--text-dim); margin-top: 4px; }
+  .ai-typing { display: flex; gap: 4px; align-items: center; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content; }
+  .ai-typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--info); animation: aiTyping 1.2s infinite; }
+  .ai-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ai-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes aiTyping { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+  .ai-chat-input { display: flex; gap: 10px; padding: 14px 20px; background: var(--white); border-top: 1px solid var(--border); align-items: flex-end; }
+  .ai-chat-input textarea { flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: var(--font-body); font-size: 0.88rem; resize: none; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s; }
+  .ai-chat-input textarea:focus { border-color: var(--info); box-shadow: 0 0 0 3px rgba(74,63,181,0.1); }
+  .ai-chat-input textarea::placeholder { color: var(--text-dim); }
+
+  /* AI Options Menu */
+  .ai-options { display: flex; flex-direction: column; gap: 6px; max-width: 320px; }
+  .ai-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .ai-option:hover { border-color: var(--info); background: var(--info-bg); }
+  .ai-option.selected { border-color: var(--info); background: var(--info-bg); }
+  .ai-option-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ai-option-icon.creative { background: var(--highlight-bg); color: var(--highlight); }
+  .ai-option-icon.precise { background: var(--info-bg); color: var(--info); }
+  .ai-option-icon.balanced { background: var(--success-bg); color: var(--success); }
+  .ai-option-icon.concise { background: var(--accent-bg); color: var(--accent); }
+  .ai-option-text { flex: 1; }
+  .ai-option-label { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+  .ai-option-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+  .ai-option-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .ai-option.selected .ai-option-check { background: var(--info); border-color: var(--info); color: white; }
+
+  /* AI Summary Card */
+  .ai-summary { border-radius: var(--radius); border: 1.5px solid var(--border); overflow: hidden; max-width: 480px; background: var(--white); }
+  .ai-summary-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: var(--info-bg); border-bottom: 1px solid var(--border); }
+  .ai-summary-icon { width: 28px; height: 28px; border-radius: var(--radius-sm); background: var(--info); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ai-summary-title { font-size: 0.85rem; font-weight: 600; flex: 1; }
+  .ai-summary-badge { font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-full); background: var(--info); color: white; }
+  .ai-summary-body { padding: 20px; }
+  .ai-summary-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+  .ai-summary-bullets { list-style: none; padding: 0; margin: 0 0 16px; }
+  .ai-summary-bullets li { font-size: 0.85rem; color: var(--text-secondary); padding: 6px 0; padding-left: 20px; position: relative; line-height: 1.5; }
+  .ai-summary-bullets li::before { content: ''; position: absolute; left: 0; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--info); }
+  .ai-summary-footer { display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .ai-summary-footer .confidence { font-size: 0.78rem; color: var(--text-muted); margin-left: auto; }
+  .ai-summary-sources { font-size: 0.75rem; color: var(--text-dim); }
+
+  @media (max-width: 860px) {
+    .ai-chat { height: 400px; }
+    .ai-options { max-width: 100%; }
+    .ai-summary { max-width: 100%; }
+    .demo-grid-2 { grid-template-columns: 1fr; }
+    .ai-msg-bubble { word-break: break-word; }
+    .ai-msg-bubble code { word-break: break-all; }
+    .ai-msg { max-width: 95%; }
+  }
+  @media (max-width: 480px) {
+    .ai-chat-header { padding: 12px 14px; }
+    .ai-messages { padding: 14px; }
+    .ai-chat-input { padding: 12px 14px; }
+    .ai-option { padding: 10px 12px; }
+    .demo-section { margin-bottom: 40px; }
+  }
+  .demo-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg></div>
+      <div class="top-bar-title">AI Components</div>
+    </div>
+    <div class="main-header">
+      <h1 class="main-title">AI Components</h1>
+      <p class="main-subtitle">Conversational interfaces, option selectors, and summary displays for AI-powered features.</p>
+    </div>
+
+    <nav class="page-tabs">
+  <a class="page-tab" href="#chat">Chat Window</a>
+  <a class="page-tab" href="#options">AI Options</a>
+  <a class="page-tab" href="#summary">Summary Card</a>
+</nav>
+
+    <!-- AI Chat Window -->
+    <div class="demo-section" id="chat">
+      <h2 class="demo-title">Chat Window</h2>
+      <p class="demo-desc">A conversational interface for interacting with an AI assistant. Supports multi-turn threads with typing indicators.</p>
+      <div class="demo-box" style="padding:0; border:none; background:transparent;">
+        <div class="ai-chat">
+          <div class="ai-chat-header">
+            <div class="ai-chat-avatar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg>
+            </div>
+            <div class="ai-chat-info">
+              <div class="ai-chat-name">Patina Assistant</div>
+              <div class="ai-chat-status">Online</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" title="Settings">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9c-.04-.6-.4-1.13-.33-1.82"/></svg>
+            </button>
+          </div>
+
+          <div class="ai-messages">
+            <div class="ai-msg assistant">
+              <div class="ai-msg-avatar ai">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="ai-msg-bubble">Hello! I'm the Patina assistant. I can help you with design system questions, component usage, and best practices. What would you like to know?</div>
+                <div class="ai-msg-meta">10:30 AM</div>
+              </div>
+            </div>
+
+            <div class="ai-msg user">
+              <div class="ai-msg-avatar human">JD</div>
+              <div>
+                <div class="ai-msg-bubble">What's the best way to handle form validation errors?</div>
+                <div class="ai-msg-meta" style="text-align:right;">10:31 AM</div>
+              </div>
+            </div>
+
+            <div class="ai-msg assistant">
+              <div class="ai-msg-avatar ai">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="ai-msg-bubble">For form validation, Patina provides two patterns:<br><br><strong>Inline validation</strong> — Show errors below each field using <code>.field-hint</code> with error styling. Validate on blur for the best user experience.<br><br><strong>Summary alerts</strong> — Use an <code>.alert-error</code> at the top of the form for submission-level errors that affect multiple fields.</div>
+                <div class="ai-msg-meta">10:31 AM</div>
+              </div>
+            </div>
+
+            <div class="ai-msg user">
+              <div class="ai-msg-avatar human">JD</div>
+              <div>
+                <div class="ai-msg-bubble">Can you show me the recommended color tokens for error states?</div>
+                <div class="ai-msg-meta" style="text-align:right;">10:32 AM</div>
+              </div>
+            </div>
+
+            <div class="ai-msg assistant">
+              <div class="ai-msg-avatar ai">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="ai-typing">
+                  <div class="ai-typing-dot"></div>
+                  <div class="ai-typing-dot"></div>
+                  <div class="ai-typing-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-chat-input">
+            <textarea rows="1" placeholder="Ask about Patina components..."></textarea>
+            <button class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Multi-turn conversations with an AI assistant or copilot.</li>
+              <li>Support chat, onboarding wizards, or inline help powered by AI.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>Displaying a single static AI response — use the Summary Card instead.</li>
+              <li>Simple yes/no prompts — use a confirmation dialog.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="ai-chat"&gt;
+  &lt;div class="ai-chat-header"&gt;
+    &lt;div class="ai-chat-avatar"&gt;&lt;!-- icon --&gt;&lt;/div&gt;
+    &lt;div class="ai-chat-info"&gt;
+      &lt;div class="ai-chat-name"&gt;Assistant&lt;/div&gt;
+      &lt;div class="ai-chat-status"&gt;Online&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="ai-messages"&gt;
+    &lt;div class="ai-msg assistant"&gt;
+      &lt;div class="ai-msg-avatar ai"&gt;&lt;!-- icon --&gt;&lt;/div&gt;
+      &lt;div&gt;
+        &lt;div class="ai-msg-bubble"&gt;Hello!&lt;/div&gt;
+        &lt;div class="ai-msg-meta"&gt;10:30 AM&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="ai-msg user"&gt;
+      &lt;div class="ai-msg-avatar human"&gt;JD&lt;/div&gt;
+      &lt;div&gt;
+        &lt;div class="ai-msg-bubble"&gt;How do I…?&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="ai-chat-input"&gt;
+    &lt;textarea placeholder="Ask a question…"&gt;&lt;/textarea&gt;
+    &lt;button class="btn btn-primary"&gt;Send&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Options Menu -->
+    <div class="demo-section" id="options">
+        <h2 class="demo-title">AI Options</h2>
+        <p class="demo-desc">Selectable modes that configure AI behavior. Radio-style selection with descriptions.</p>
+        <div class="ai-options" id="ai-options">
+          <div class="ai-option" onclick="selectAiOption(this)">
+            <div class="ai-option-icon creative">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="ai-option-text">
+              <div class="ai-option-label">Creative</div>
+              <div class="ai-option-desc">Exploratory, expressive responses with broader associations</div>
+            </div>
+            <div class="ai-option-check"></div>
+          </div>
+          <div class="ai-option selected" onclick="selectAiOption(this)">
+            <div class="ai-option-icon balanced">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            </div>
+            <div class="ai-option-text">
+              <div class="ai-option-label">Balanced</div>
+              <div class="ai-option-desc">Well-rounded replies that blend accuracy with readability</div>
+            </div>
+            <div class="ai-option-check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="ai-option" onclick="selectAiOption(this)">
+            <div class="ai-option-icon precise">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div class="ai-option-text">
+              <div class="ai-option-label">Precise</div>
+              <div class="ai-option-desc">Factual, concise answers with citations when available</div>
+            </div>
+            <div class="ai-option-check"></div>
+          </div>
+          <div class="ai-option" onclick="selectAiOption(this)">
+            <div class="ai-option-icon concise">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <div class="ai-option-text">
+              <div class="ai-option-label">Concise</div>
+              <div class="ai-option-desc">Brief, to-the-point answers — minimal explanation</div>
+            </div>
+            <div class="ai-option-check"></div>
+          </div>
+        </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Letting users choose between AI modes, tones, or model configurations.</li>
+              <li>Settings panels where only one AI behavior can be active at a time.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>Multiple options can be selected — use checkboxes or toggle switches instead.</li>
+              <li>More than 5 options — use a dropdown select.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="ai-options"&gt;
+  &lt;div class="ai-option selected" onclick="selectAiOption(this)"&gt;
+    &lt;div class="ai-option-icon balanced"&gt;&lt;!-- icon --&gt;&lt;/div&gt;
+    &lt;div class="ai-option-text"&gt;
+      &lt;div class="ai-option-label"&gt;Balanced&lt;/div&gt;
+      &lt;div class="ai-option-desc"&gt;Well-rounded replies&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="ai-option-check"&gt;&lt;!-- checkmark svg when selected --&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="ai-option" onclick="selectAiOption(this)"&gt;
+    &lt;div class="ai-option-icon precise"&gt;&lt;!-- icon --&gt;&lt;/div&gt;
+    &lt;div class="ai-option-text"&gt;
+      &lt;div class="ai-option-label"&gt;Precise&lt;/div&gt;
+      &lt;div class="ai-option-desc"&gt;Factual, concise answers&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="ai-option-check"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Icon variants: .creative, .balanced, .precise, .concise --&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Summary Card -->
+    <div class="demo-section" id="summary">
+        <h2 class="demo-title">Summary Card</h2>
+        <p class="demo-desc">Displays AI-generated summaries with key takeaways and confidence indicators.</p>
+        <div class="ai-summary">
+          <div class="ai-summary-header">
+            <div class="ai-summary-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="ai-summary-title">Project Summary</div>
+            <span class="ai-summary-badge">AI Generated</span>
+          </div>
+          <div class="ai-summary-body">
+            <p class="ai-summary-text">Based on the latest sprint data and team activity, here are the key findings for the Brand Refresh project:</p>
+            <ul class="ai-summary-bullets">
+              <li>50% task completion rate — on track for the March 10 deadline with current velocity</li>
+              <li>Typography audit completed ahead of schedule, freeing up design bandwidth</li>
+              <li>Stakeholder review is the highest-risk item due to external dependencies</li>
+              <li>Team engagement is high — 3 active contributors with daily commits</li>
+            </ul>
+            <div class="ai-summary-footer">
+              <button class="btn btn-ghost btn-sm" style="color:var(--info);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                Regenerate
+              </button>
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+              <span class="confidence">92% confidence</span>
+            </div>
+            <div class="ai-summary-sources" style="margin-top:10px;">Based on 14 tasks, 23 commits, and 3 team reports</div>
+          </div>
+        </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Presenting AI-generated insights, reports, or analysis results.</li>
+              <li>Dashboards where users need quick AI-powered takeaways with confidence levels.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>Content is user-authored — use a standard card instead.</li>
+              <li>The summary needs interactive editing — use the Chat Window for iterative refinement.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="ai-summary"&gt;
+  &lt;div class="ai-summary-header"&gt;
+    &lt;div class="ai-summary-icon"&gt;&lt;!-- icon --&gt;&lt;/div&gt;
+    &lt;div class="ai-summary-title"&gt;Project Summary&lt;/div&gt;
+    &lt;span class="ai-summary-badge"&gt;AI Generated&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ai-summary-body"&gt;
+    &lt;p class="ai-summary-text"&gt;Summary text…&lt;/p&gt;
+    &lt;ul class="ai-summary-bullets"&gt;
+      &lt;li&gt;Key finding one&lt;/li&gt;
+      &lt;li&gt;Key finding two&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class="ai-summary-footer"&gt;
+      &lt;button class="btn btn-ghost btn-sm"&gt;Regenerate&lt;/button&gt;
+      &lt;button class="btn btn-ghost btn-sm"&gt;Copy&lt;/button&gt;
+      &lt;span class="confidence"&gt;92% confidence&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="ai-summary-sources"&gt;Based on 14 tasks…&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+function toggleCode(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('show');
+}
+function copyCode(btn) {
+  const code = btn.nextElementSibling.textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+function selectAiOption(el) {
+  document.querySelectorAll('.ai-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.ai-option-check').innerHTML = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.ai-option-check').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+}
+</script>
+<script src="inspector.js"></script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

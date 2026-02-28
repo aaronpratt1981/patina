@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundations — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .swatch { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
+  .swatch-color { height: 52px; }
+  .swatch-info { padding: 8px 10px; font-size: 0.72rem; }
+  .swatch-name { font-weight: 600; margin-bottom: 2px; }
+  .swatch-hex { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.68rem; }
+
+  .section-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 12px; margin-top: 24px; }
+  .section-label:first-child { margin-top: 0; }
+
+  .type-specimen { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .type-specimen:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .type-meta { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-dim); margin-top: 6px; }
+
+  .space-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .space-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .space-fill { background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 3px; width: 32px; }
+  .space-label { font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-muted); }
+
+  .shadow-row { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding: 8px 4px 16px; }
+  .shadow-block { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .shadow-demo { width: 80px; height: 56px; background: var(--white); border-radius: var(--radius-sm); }
+  .shadow-label { font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-muted); }
+
+  .radius-row { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .radius-block { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .radius-demo { width: 60px; height: 60px; background: var(--accent-bg); border: 1.5px solid var(--accent-border); }
+  .radius-label { font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-muted); text-align: center; }
+
+  .chart-note { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; font-style: italic; }
+
+  .section-rule { border: none; border-top: 1px solid var(--border); margin: 0 0 48px; }
+
+
+
+  @media (max-width: 860px) {
+    .demo-row { flex-wrap: wrap; }
+    pre { overflow-x: auto; }
+    /* Typography 2-col grid → 1-col */
+    .demo-box [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+    /* Stat card 3-col grid → 1-col */
+    .demo-box [style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    /* Stepper wraps */
+    [style*="display:flex;align-items:center;gap:0"] { flex-wrap: wrap; gap: 8px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .demo-box { padding: 16px; }
+    .type-meta { overflow-wrap: break-word; word-break: break-all; }
+    .space-row { gap: 10px; }
+    .shadow-row { gap: 16px; }
+    .radius-row { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg></div>
+      <div class="top-bar-title">Foundations</div>
+    </div>
+
+    <!-- Components: swatch-grid, swatch, type-specimen, type-meta, space-row, space-block, shadow-row, shadow-block, radius-row, radius-block, section-rule, toc, toc-link, demo-section, demo-box, demo-label, code-panel, usage-block -->
+
+    <div class="main-header">
+      <h1 class="main-title">Foundations</h1>
+      <p class="main-subtitle">Design tokens, typography, spacing, visual primitives, and iconography for the Patina design system.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#colors">Colors</a>
+      <a class="page-tab" href="#typography">Typography</a>
+      <a class="page-tab" href="#spacing">Spacing</a>
+      <a class="page-tab" href="#elevation">Elevation</a>
+      <a class="page-tab" href="#radius">Border Radius</a>
+      <a class="page-tab" href="#icon-box">Icon Box</a>
+    </nav>
+
+    <!-- COLORS -->
+    <div id="colors" class="demo-section">
+      <h2 class="demo-title">Colors</h2>
+      <p class="demo-desc">CSS custom properties defining the color language. Always reference tokens — never hard-code values.</p>
+
+      <div class="demo-box">
+        <div class="section-label">Neutrals</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#1A1A1A"></div><div class="swatch-info"><div class="swatch-name">--text</div><div class="swatch-hex">#1A1A1A</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#5C5C5C"></div><div class="swatch-info"><div class="swatch-name">--text-secondary</div><div class="swatch-hex">#5C5C5C</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#999590"></div><div class="swatch-info"><div class="swatch-name">--text-muted</div><div class="swatch-hex">#999590</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#B8B3AC"></div><div class="swatch-info"><div class="swatch-name">--text-dim</div><div class="swatch-hex">#B8B3AC</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#D4D0C8"></div><div class="swatch-info"><div class="swatch-name">--border-strong</div><div class="swatch-hex">#D4D0C8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#E8E5DF"></div><div class="swatch-info"><div class="swatch-name">--border</div><div class="swatch-hex">#E8E5DF</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#F5F3EF"></div><div class="swatch-info"><div class="swatch-name">--bg-warm</div><div class="swatch-hex">#F5F3EF</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FAFAF8;border:1px solid #E8E5DF"></div><div class="swatch-info"><div class="swatch-name">--bg</div><div class="swatch-hex">#FAFAF8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FFFFFF;border:1px solid #E8E5DF"></div><div class="swatch-info"><div class="swatch-name">--white</div><div class="swatch-hex">#FFFFFF</div></div></div>
+        </div>
+
+        <div class="section-label">Accent — Rust</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#8F3528"></div><div class="swatch-info"><div class="swatch-name">--accent-dark</div><div class="swatch-hex">#8F3528</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#B54332"></div><div class="swatch-info"><div class="swatch-name">--accent</div><div class="swatch-hex">#B54332</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#C45241"></div><div class="swatch-info"><div class="swatch-name">--accent-light</div><div class="swatch-hex">#C45241</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#E8C8C3"></div><div class="swatch-info"><div class="swatch-name">--accent-border</div><div class="swatch-hex">#E8C8C3</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FBF0EE"></div><div class="swatch-info"><div class="swatch-name">--accent-bg</div><div class="swatch-hex">#FBF0EE</div></div></div>
+        </div>
+
+        <div class="section-label">Secondary Accent — Lichen</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#5F7F63"></div><div class="swatch-info"><div class="swatch-name">--accent2-dark</div><div class="swatch-hex">#5F7F63</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#7A9A7E"></div><div class="swatch-info"><div class="swatch-name">--accent2</div><div class="swatch-hex">#7A9A7E</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#8DAE91"></div><div class="swatch-info"><div class="swatch-name">--accent2-light</div><div class="swatch-hex">#8DAE91</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#B8D4BB"></div><div class="swatch-info"><div class="swatch-name">--accent2-border</div><div class="swatch-hex">#B8D4BB</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#EFF5F0"></div><div class="swatch-info"><div class="swatch-name">--accent2-bg</div><div class="swatch-hex">#EFF5F0</div></div></div>
+        </div>
+
+        <div class="section-label">Tertiary Accent — Chicory</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#3570B0"></div><div class="swatch-info"><div class="swatch-name">--accent3-dark</div><div class="swatch-hex">#3570B0</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#4A90D9"></div><div class="swatch-info"><div class="swatch-name">--accent3</div><div class="swatch-hex">#4A90D9</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#6BA8E8"></div><div class="swatch-info"><div class="swatch-name">--accent3-light</div><div class="swatch-hex">#6BA8E8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#A8C8ED"></div><div class="swatch-info"><div class="swatch-name">--accent3-border</div><div class="swatch-hex">#A8C8ED</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#EBF2FC"></div><div class="swatch-info"><div class="swatch-name">--accent3-bg</div><div class="swatch-hex">#EBF2FC</div></div></div>
+        </div>
+
+        <div class="section-label">Semantic</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#D4603A"></div><div class="swatch-info"><div class="swatch-name">--coral</div><div class="swatch-hex">#D4603A</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FEF1EC"></div><div class="swatch-info"><div class="swatch-name">--coral-bg</div><div class="swatch-hex">#FEF1EC</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#4A3FB5"></div><div class="swatch-info"><div class="swatch-name">--indigo</div><div class="swatch-hex">#4A3FB5</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#EEEDF8"></div><div class="swatch-info"><div class="swatch-name">--indigo-bg</div><div class="swatch-hex">#EEEDF8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#2E7D32"></div><div class="swatch-info"><div class="swatch-name">--green</div><div class="swatch-hex">#2E7D32</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#EDF7ED"></div><div class="swatch-info"><div class="swatch-name">--green-bg</div><div class="swatch-hex">#EDF7ED</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#B8860B"></div><div class="swatch-info"><div class="swatch-name">--amber</div><div class="swatch-hex">#B8860B</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FDF6E3"></div><div class="swatch-info"><div class="swatch-name">--amber-bg</div><div class="swatch-hex">#FDF6E3</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#C0392B"></div><div class="swatch-info"><div class="swatch-name">--red</div><div class="swatch-hex">#C0392B</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#FDEDEB"></div><div class="swatch-info"><div class="swatch-name">--red-bg</div><div class="swatch-hex">#FDEDEB</div></div></div>
+        </div>
+
+        <div class="section-label">Chart Palette</div>
+        <p class="chart-note">Optimized for data visualization — high contrast, warm-cool alternation</p>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#E8634A"></div><div class="swatch-info"><div class="swatch-name">--chart-1</div><div class="swatch-hex">#E8634A</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#5B6ABF"></div><div class="swatch-info"><div class="swatch-name">--chart-2</div><div class="swatch-hex">#5B6ABF</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#2EA87A"></div><div class="swatch-info"><div class="swatch-name">--chart-3</div><div class="swatch-hex">#2EA87A</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#E5A832"></div><div class="swatch-info"><div class="swatch-name">--chart-4</div><div class="swatch-hex">#E5A832</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#9B59B6"></div><div class="swatch-info"><div class="swatch-name">--chart-5</div><div class="swatch-hex">#9B59B6</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#3498DB"></div><div class="swatch-info"><div class="swatch-name">--chart-6</div><div class="swatch-hex">#3498DB</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#E67E22"></div><div class="swatch-info"><div class="swatch-name">--chart-7</div><div class="swatch-hex">#E67E22</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#1ABC9C"></div><div class="swatch-info"><div class="swatch-name">--chart-8</div><div class="swatch-hex">#1ABC9C</div></div></div>
+        </div>
+
+        <div class="section-label">AI Palette</div>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#5E4B8B"></div><div class="swatch-info"><div class="swatch-name">--ai-dark</div><div class="swatch-hex">#5E4B8B</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#7B64A8"></div><div class="swatch-info"><div class="swatch-name">--ai</div><div class="swatch-hex">#7B64A8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#9681BE"></div><div class="swatch-info"><div class="swatch-name">--ai-light</div><div class="swatch-hex">#9681BE</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#C4B8D8"></div><div class="swatch-info"><div class="swatch-name">--ai-border</div><div class="swatch-hex">#C4B8D8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#F0ECF5"></div><div class="swatch-info"><div class="swatch-name">--ai-bg</div><div class="swatch-hex">#F0ECF5</div></div></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Reference tokens for all color values. Use semantic tokens (green, red, amber) for status.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Hard-coding hex values directly in components.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div style="color: var(--accent)"&gt;Primary action&lt;/div&gt;
+&lt;div style="background: var(--accent-bg); border: 1px solid var(--accent-border)"&gt;
+  Accent tinted surface
+&lt;/div&gt;
+&lt;div style="color: var(--success)"&gt;Success status&lt;/div&gt;
+&lt;div style="color: var(--danger)"&gt;Error status&lt;/div&gt;
+&lt;div style="color: var(--warning)"&gt;Warning status&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- TYPOGRAPHY -->
+    <div id="typography" class="demo-section">
+      <h2 class="demo-title">Typography</h2>
+      <p class="demo-desc">Three typefaces form the typographic system. Noto Serif for display, Inter for UI, IBM Plex Mono for code.</p>
+
+      <div class="demo-box">
+        <div class="type-specimen">
+          <div style="font-family:'Noto Serif',serif;font-size:2.4rem;font-weight:400;letter-spacing:-0.03em;line-height:1.1">Display Large</div>
+          <div class="type-meta">Noto Serif 400 · 2.4rem · -0.03em · .t-display .t-display-lg</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Noto Serif',serif;font-size:2rem;font-weight:400;letter-spacing:-0.03em;line-height:1.15">Display Medium</div>
+          <div class="type-meta">Noto Serif 400 · 2rem · -0.03em · .t-display .t-display-md</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Noto Serif',serif;font-size:1.5rem;font-weight:400;letter-spacing:-0.02em;">Display Small</div>
+          <div class="type-meta">Noto Serif 400 · 1.5rem · .t-display .t-display-sm</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Noto Serif',serif;font-size:1.15rem;font-weight:400;">Card Heading / Section Heading</div>
+          <div class="type-meta">Noto Serif 400 · 1.15rem · .t-heading</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:400;line-height:1.6;">Body text in Inter. Used for paragraphs, descriptions, and interface copy. Weights 300 through 700 are available across the system.</div>
+          <div class="type-meta">Inter 400 · 0.95rem · 1.6lh · .t-body</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:400;">Small — supporting text, captions, and metadata</div>
+          <div class="type-meta">Inter 400 · 0.85rem · .t-small</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:400;">Tiny — timestamps, fine print, supplemental detail</div>
+          <div class="type-meta">Inter 400 · 0.75rem · .t-tiny</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Label — Section Headers, Form Labels</div>
+          <div class="type-meta">Inter 600 · 0.78rem · uppercase · 0.08em · .t-label</div>
+        </div>
+        <div class="type-specimen">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.88rem;font-weight:400;">mono { font-family: 'IBM Plex Mono'; font-size: 0.88rem; }</div>
+          <div class="type-meta">IBM Plex Mono 400 · 0.88rem · .t-mono</div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+        <div class="demo-label">Content Elements</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div>
+            <div class="type-meta" style="margin-bottom:8px;">Unordered List</div>
+            <ul style="margin:0 0 16px;padding-left:20px;font-size:0.9rem;line-height:1.6;list-style:disc;">
+              <li>First item in the list</li>
+              <li>Second item with more detail</li>
+              <li>Third item to complete the set</li>
+            </ul>
+            <div class="type-meta" style="margin-bottom:8px;">Ordered List</div>
+            <ol style="margin:0 0 16px;padding-left:20px;font-size:0.9rem;line-height:1.6;list-style:decimal;">
+              <li>Step one of the process</li>
+              <li>Step two follows naturally</li>
+              <li>Step three completes it</li>
+            </ol>
+            <div class="type-meta" style="margin-bottom:8px;">Nested List</div>
+            <ul style="margin:0;padding-left:20px;font-size:0.9rem;line-height:1.6;list-style:disc;">
+              <li>Parent item
+                <ul style="padding-left:20px;margin:4px 0;list-style:circle;">
+                  <li>Child item one</li>
+                  <li>Child item two
+                    <ul style="padding-left:20px;margin:4px 0;list-style:square;">
+                      <li>Grandchild item</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Another parent item</li>
+            </ul>
+          </div>
+          <div>
+            <div class="type-meta" style="margin-bottom:8px;">Blockquote</div>
+            <blockquote style="margin:0 0 16px;padding:12px 16px;border-left:3px solid var(--accent);background:var(--bg-warm);border-radius:0 var(--radius-xs) var(--radius-xs) 0;font-size:0.9rem;line-height:1.6;font-style:italic;color:var(--text-secondary);">
+              "Design is not just what it looks like and feels like. Design is how it works."
+              <div style="margin-top:8px;font-size:0.78rem;font-style:normal;color:var(--text-muted);">— Steve Jobs</div>
+            </blockquote>
+            <div class="type-meta" style="margin-bottom:8px;">Inline Code</div>
+            <p style="font-size:0.9rem;line-height:1.6;margin:0 0 16px;">Use <code style="font-family:var(--font-mono);font-size:0.82rem;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">var(--accent)</code> for the primary brand color and <code style="font-family:var(--font-mono);font-size:0.82rem;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">.btn-primary</code> for CTAs.</p>
+            <div class="type-meta" style="margin-bottom:8px;">Code Block</div>
+            <pre style="margin:0;background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:var(--radius);font-family:var(--font-mono);font-size:0.8rem;line-height:1.6;overflow-x:auto;">.card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}</pre>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Display for headings, Inter for body/UI, Mono for code and data.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Mixing display typeface into body text or using body font for headings.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;h1 class="t-display t-display-lg"&gt;Display Large&lt;/h1&gt;
+&lt;p class="t-body"&gt;Body text in Inter.&lt;/p&gt;
+&lt;span class="t-small"&gt;Small supporting text&lt;/span&gt;
+&lt;span class="t-label"&gt;Label text&lt;/span&gt;
+&lt;code class="t-mono"&gt;Monospaced code&lt;/code&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SPACING -->
+    <div id="spacing" class="demo-section">
+      <h2 class="demo-title">Spacing Scale</h2>
+      <p class="demo-desc">A 4px base grid. All spacing values are multiples of 4.</p>
+
+      <div class="demo-box">
+        <div class="space-row">
+          <div class="space-block"><div class="space-fill" style="height:4px"></div><div class="space-label">4</div></div>
+          <div class="space-block"><div class="space-fill" style="height:8px"></div><div class="space-label">8</div></div>
+          <div class="space-block"><div class="space-fill" style="height:12px"></div><div class="space-label">12</div></div>
+          <div class="space-block"><div class="space-fill" style="height:16px"></div><div class="space-label">16</div></div>
+          <div class="space-block"><div class="space-fill" style="height:20px"></div><div class="space-label">20</div></div>
+          <div class="space-block"><div class="space-fill" style="height:24px"></div><div class="space-label">24</div></div>
+          <div class="space-block"><div class="space-fill" style="height:28px"></div><div class="space-label">28</div></div>
+          <div class="space-block"><div class="space-fill" style="height:32px"></div><div class="space-label">32</div></div>
+          <div class="space-block"><div class="space-fill" style="height:40px"></div><div class="space-label">40</div></div>
+          <div class="space-block"><div class="space-fill" style="height:48px"></div><div class="space-label">48</div></div>
+          <div class="space-block"><div class="space-fill" style="height:56px"></div><div class="space-label">56</div></div>
+          <div class="space-block"><div class="space-fill" style="height:64px"></div><div class="space-label">64</div></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Use spacing tokens for all margin, padding, and gap values to maintain consistent rhythm.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Arbitrary pixel values that don't align with the 4px grid.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;!-- Spacing tokens: 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64 --&gt;
+&lt;div style="padding: 16px;"&gt;16px padding&lt;/div&gt;
+&lt;div style="margin-bottom: 24px;"&gt;24px margin&lt;/div&gt;
+&lt;div style="gap: 12px;"&gt;12px flex gap&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- ELEVATION -->
+    <div id="elevation" class="demo-section">
+      <h2 class="demo-title">Elevation / Shadows</h2>
+      <p class="demo-desc">Five levels of elevation expressed through layered box-shadows with warm undertones.</p>
+
+      <div class="demo-box">
+        <div class="shadow-row">
+          <div class="shadow-block">
+            <div class="shadow-demo" style="box-shadow:var(--shadow-xs)"></div>
+            <div class="shadow-label">--shadow-xs</div>
+          </div>
+          <div class="shadow-block">
+            <div class="shadow-demo" style="box-shadow:var(--shadow-sm)"></div>
+            <div class="shadow-label">--shadow-sm</div>
+          </div>
+          <div class="shadow-block">
+            <div class="shadow-demo" style="box-shadow:var(--shadow-md)"></div>
+            <div class="shadow-label">--shadow-md</div>
+          </div>
+          <div class="shadow-block">
+            <div class="shadow-demo" style="box-shadow:var(--shadow-lg)"></div>
+            <div class="shadow-label">--shadow-lg</div>
+          </div>
+          <div class="shadow-block">
+            <div class="shadow-demo" style="box-shadow:var(--shadow-focus)"></div>
+            <div class="shadow-label">--shadow-focus</div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Higher elevation for popovers and modals; lower for cards and subtle lifts.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Flat surfaces that don't need visual depth — use borders instead.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div style="box-shadow: var(--shadow-xs);"&gt;Extra small&lt;/div&gt;
+&lt;div style="box-shadow: var(--shadow-sm);"&gt;Small&lt;/div&gt;
+&lt;div style="box-shadow: var(--shadow-md);"&gt;Medium&lt;/div&gt;
+&lt;div style="box-shadow: var(--shadow-lg);"&gt;Large&lt;/div&gt;
+&lt;div style="box-shadow: var(--shadow-focus);"&gt;Focus ring&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- BORDER RADIUS -->
+    <div id="radius" class="demo-section">
+      <h2 class="demo-title">Border Radius</h2>
+      <p class="demo-desc">Consistent rounding scale from subtle corners to fully circular elements.</p>
+
+      <div class="demo-box">
+        <div class="radius-row">
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:6px"></div>
+            <div class="radius-label">--radius-xs<br>6px</div>
+          </div>
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:10px"></div>
+            <div class="radius-label">--radius-sm<br>10px</div>
+          </div>
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:14px"></div>
+            <div class="radius-label">--radius<br>14px</div>
+          </div>
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:20px"></div>
+            <div class="radius-label">--radius-lg<br>20px</div>
+          </div>
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:28px"></div>
+            <div class="radius-label">--radius-xl<br>28px</div>
+          </div>
+          <div class="radius-block">
+            <div class="radius-demo" style="border-radius:100px;width:60px;height:60px;"></div>
+            <div class="radius-label">--radius-full<br>100px</div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Match radius to component size: small for inputs, large for cards, full for pills and avatars.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Using arbitrary radius values outside the scale.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div style="border-radius: var(--radius-xs);"&gt;6px&lt;/div&gt;
+&lt;div style="border-radius: var(--radius-sm);"&gt;10px&lt;/div&gt;
+&lt;div style="border-radius: var(--radius);"&gt;14px&lt;/div&gt;
+&lt;div style="border-radius: var(--radius-lg);"&gt;20px&lt;/div&gt;
+&lt;div style="border-radius: var(--radius-xl);"&gt;28px&lt;/div&gt;
+&lt;div style="border-radius: var(--radius-full);"&gt;100px (pill)&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- ICON BOX -->
+    <div id="icon-box" class="demo-section">
+      <h2 class="demo-title">Icon Box</h2>
+      <p class="demo-desc">Colored icon containers for visual categorization in lists, stats, and cards. Available in two sizes across all semantic colors.</p>
+      <div class="demo-box">
+        <div class="demo-label">Default Size — All Colors</div>
+        <div class="demo-row" style="align-items:center; margin-bottom:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--accent-bg);color:var(--accent);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--highlight-bg);color:var(--highlight);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Highlight</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--info-bg);color:var(--info);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Info</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--success-bg);color:var(--success);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Success</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--warning-bg);color:var(--warning);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Warning</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--danger-bg);color:var(--danger);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Danger</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--accent2-bg);color:var(--accent2);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent2</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box" style="background:var(--accent3-bg);color:var(--accent3);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent3</span>
+          </div>
+        </div>
+
+        <div class="demo-label">Small Size — All Colors</div>
+        <div class="demo-row" style="align-items:center; margin-bottom:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--accent-bg);color:var(--accent);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--highlight-bg);color:var(--highlight);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Highlight</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--info-bg);color:var(--info);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Info</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--success-bg);color:var(--success);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Success</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--warning-bg);color:var(--warning);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Warning</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--danger-bg);color:var(--danger);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Danger</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--accent2-bg);color:var(--accent2);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent2</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="icon-box icon-box-sm" style="background:var(--accent3-bg);color:var(--accent3);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            </div>
+            <span class="demo-label" style="margin:0;">Accent3</span>
+          </div>
+        </div>
+
+        <div class="demo-label">Inline — No Background</div>
+        <div class="demo-row" style="align-items:center; margin-bottom:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--accent);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+            <span class="demo-label" style="margin:0;">Accent</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--highlight);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+            <span class="demo-label" style="margin:0;">Highlight</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--info);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+            <span class="demo-label" style="margin:0;">Info</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--success);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="demo-label" style="margin:0;">Success</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--warning);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <span class="demo-label" style="margin:0;">Warning</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--danger);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+            <span class="demo-label" style="margin:0;">Danger</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <span style="color:var(--text-muted);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+            <span class="demo-label" style="margin:0;">Muted</span>
+          </div>
+        </div>
+
+        <div class="demo-label">In Context — Stepper (Inline Icons)</div>
+        <div style="display:flex;align-items:center;gap:0;margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-full);background:var(--accent-bg);color:var(--accent);font-size:0.82rem;font-weight:600;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Cart
+          </div>
+          <div style="width:32px;height:1px;background:var(--border);"></div>
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-full);background:var(--accent-bg);color:var(--accent);font-size:0.82rem;font-weight:600;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Shipping
+          </div>
+          <div style="width:32px;height:1px;background:var(--border);"></div>
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-full);border:1px solid var(--border);color:var(--text-secondary);font-size:0.82rem;font-weight:500;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Payment
+          </div>
+          <div style="width:32px;height:1px;background:var(--border);"></div>
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-full);border:1px solid var(--border);color:var(--text-dim);font-size:0.82rem;font-weight:500;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirm
+          </div>
+        </div>
+
+        <div class="demo-label">In Context — List Item</div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);">
+            <div class="icon-box" style="background:var(--accent-bg);color:var(--accent);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:0.9rem;font-weight:600;">Project Roadmap.pdf</div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">2.4 MB &middot; Updated 2 hours ago</div>
+            </div>
+            <span class="badge badge-success">Synced</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);">
+            <div class="icon-box" style="background:var(--accent3-bg);color:var(--accent3);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:0.9rem;font-weight:600;">hero-banner.png</div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">840 KB &middot; Updated yesterday</div>
+            </div>
+            <span class="badge badge-warning">Modified</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;">
+            <div class="icon-box" style="background:var(--accent2-bg);color:var(--accent2);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:0.9rem;font-weight:600;">app.config.ts</div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">12 KB &middot; Updated 3 days ago</div>
+            </div>
+            <span class="badge badge-neutral">Archived</span>
+          </div>
+        </div>
+
+        <div class="demo-label">In Context — Stat Card Header</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div class="icon-box icon-box-sm" style="background:var(--success-bg);color:var(--success);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              </div>
+              <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Revenue</span>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:500;">$24.8k</div>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div class="icon-box icon-box-sm" style="background:var(--info-bg);color:var(--info);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Users</span>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:500;">3,241</div>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div class="icon-box icon-box-sm" style="background:var(--highlight-bg);color:var(--highlight);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Activity</span>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:500;">89%</div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Visual differentiation of categories, features, or metric types.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>The entity has a meaningful avatar — use avatar instead.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="icon-box" style="background:var(--accent-bg);color:var(--accent);"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;div class="icon-box icon-box-sm" style="background:var(--success-bg);color:var(--success);"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;!-- Color patterns: accent, highlight, info, success, warning, danger, accent2, accent3 --&gt;
+&lt;!-- Size: icon-box (44px) or icon-box icon-box-sm (36px) --&gt;
+
+&lt;!-- Inline icon (no background) --&gt;
+&lt;span style="color:var(--accent);"&gt;
+  &lt;svg ...&gt;...&lt;/svg&gt;
+&lt;/span&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Gallery — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  /* Basic Grid */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .gallery-grid img {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .gallery-grid img:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Masonry */
+  .gallery-masonry {
+    column-count: 3;
+    column-gap: 12px;
+  }
+  @media (max-width: 768px) { .gallery-masonry { column-count: 2; } }
+  @media (max-width: 480px) { .gallery-masonry { column-count: 1; } }
+  .gallery-masonry-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .gallery-masonry-item img {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .gallery-masonry-item:hover img {
+    transform: scale(1.03);
+  }
+
+  /* Lightbox */
+  .gallery-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-lightbox.active { display: flex; }
+  .gallery-lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+  }
+  .gallery-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .gallery-lightbox-close:hover { background: rgba(255, 255, 255, 0.3); }
+  .gallery-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .gallery-lightbox-nav:hover { background: rgba(255, 255, 255, 0.3); }
+  .gallery-lightbox-nav.prev { left: 20px; }
+  .gallery-lightbox-nav.next { right: 20px; }
+
+  /* Hover Captions */
+  .gallery-caption-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .gallery-caption-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .gallery-caption-item img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+  }
+  .gallery-caption-item:hover img { transform: scale(1.05); }
+  .gallery-caption-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: #fff;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .gallery-caption-item:hover .gallery-caption-overlay {
+    transform: translateY(0);
+  }
+  .gallery-caption-overlay .caption-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+  .gallery-caption-overlay .caption-desc {
+    font-size: 0.78rem;
+    opacity: 0.85;
+  }
+
+  /* Carousel */
+  .gallery-carousel-wrapper { position: relative; }
+  .gallery-carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+  }
+  .gallery-carousel img {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 280px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .gallery-carousel img:hover { transform: scale(1.03); }
+  .gallery-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s, border-color 0.15s;
+    z-index: 2;
+  }
+  .gallery-carousel-btn:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-border);
+  }
+  .gallery-carousel-btn.prev { left: -18px; }
+  .gallery-carousel-btn.next { right: -18px; }
+  @media (max-width: 860px) {
+    .gallery-carousel img { width: 200px; height: 140px; }
+    .gallery-carousel-wrapper { overflow: hidden; }
+    .gallery-carousel-btn.prev { left: 4px; }
+    .gallery-carousel-btn.next { right: 4px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .gallery-caption-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    pre { overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+  }
+  @media (max-width: 480px) {
+    .gallery-carousel img { width: 160px; height: 120px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery-caption-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery-masonry { column-count: 1; }
+    .demo-box { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <div class="top-bar-title">Image Gallery</div>
+    </div>
+    <div class="main-header">
+      <h1 class="main-title">Image Gallery</h1>
+      <p class="main-subtitle">Responsive image layouts for grids, masonry, lightboxes, hover captions, and carousels. Pure CSS with a small lightbox script.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#basic-grid">Basic Grid</a>
+      <a class="page-tab" href="#masonry">Masonry</a>
+      <a class="page-tab" href="#lightbox">Lightbox</a>
+      <a class="page-tab" href="#hover-captions">Hover Captions</a>
+      <a class="page-tab" href="#carousel">Carousel</a>
+    </nav>
+
+    <!-- BASIC GRID -->
+    <section class="demo-section" id="basic-grid">
+      <div class="demo-title">Basic Grid</div>
+      <div class="demo-desc">Responsive auto-fill grid with uniform aspect-ratio thumbnails. Images scale to fill available columns.</div>
+      <div class="demo-box">
+        <div class="gallery-grid">
+          <img src="https://picsum.photos/seed/patina1/400/400" alt="Gallery image 1">
+          <img src="https://picsum.photos/seed/patina2/400/400" alt="Gallery image 2">
+          <img src="https://picsum.photos/seed/patina3/400/400" alt="Gallery image 3">
+          <img src="https://picsum.photos/seed/patina4/400/400" alt="Gallery image 4">
+          <img src="https://picsum.photos/seed/patina5/400/400" alt="Gallery image 5">
+          <img src="https://picsum.photos/seed/patina6/400/400" alt="Gallery image 6">
+          <img src="https://picsum.photos/seed/patina7/400/400" alt="Gallery image 7">
+          <img src="https://picsum.photos/seed/patina8/400/400" alt="Gallery image 8">
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Product thumbnails or avatar grids</li><li>Uniform content where equal sizing aids scanning</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Images have widely varying aspect ratios (use masonry)</li><li>A single hero image is more appropriate</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="gallery-grid"&gt;
+  &lt;img src="photo-1.jpg" alt="Description"&gt;
+  &lt;img src="photo-2.jpg" alt="Description"&gt;
+  &lt;img src="photo-3.jpg" alt="Description"&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- MASONRY -->
+    <section class="demo-section" id="masonry">
+      <div class="demo-title">Masonry</div>
+      <div class="demo-desc">CSS columns-based staggered layout. Images display at their natural aspect ratios, creating an organic, Pinterest-style flow.</div>
+      <div class="demo-box">
+        <div class="gallery-masonry">
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry1/400/500" alt="Masonry image 1"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry2/400/300" alt="Masonry image 2"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry3/400/450" alt="Masonry image 3"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry4/400/350" alt="Masonry image 4"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry5/400/550" alt="Masonry image 5"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry6/400/400" alt="Masonry image 6"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry7/400/480" alt="Masonry image 7"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry8/400/320" alt="Masonry image 8"></div>
+          <div class="gallery-masonry-item"><img src="https://picsum.photos/seed/msnry9/400/420" alt="Masonry image 9"></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Photo portfolios or mixed-ratio content</li><li>Visual discovery feeds where variety matters</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Uniform sizing is required for scanning (use basic grid)</li><li>Reading order matters — columns reorder content</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="gallery-masonry"&gt;
+  &lt;div class="gallery-masonry-item"&gt;
+    &lt;img src="photo-1.jpg" alt="Description"&gt;
+  &lt;/div&gt;
+  &lt;div class="gallery-masonry-item"&gt;
+    &lt;img src="photo-2.jpg" alt="Description"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <section class="demo-section" id="lightbox">
+      <div class="demo-title">Lightbox</div>
+      <div class="demo-desc">Click any image to open a full-screen modal. Navigate with arrow keys or buttons. Press Escape or click the backdrop to close.</div>
+      <div class="demo-box">
+        <div class="gallery-grid" id="lightbox-grid">
+          <img src="https://picsum.photos/seed/lb1/400/400" alt="Lightbox image 1" onclick="openLightbox(0)">
+          <img src="https://picsum.photos/seed/lb2/400/400" alt="Lightbox image 2" onclick="openLightbox(1)">
+          <img src="https://picsum.photos/seed/lb3/400/400" alt="Lightbox image 3" onclick="openLightbox(2)">
+          <img src="https://picsum.photos/seed/lb4/400/400" alt="Lightbox image 4" onclick="openLightbox(3)">
+          <img src="https://picsum.photos/seed/lb5/400/400" alt="Lightbox image 5" onclick="openLightbox(4)">
+          <img src="https://picsum.photos/seed/lb6/400/400" alt="Lightbox image 6" onclick="openLightbox(5)">
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Photo detail views that need full-screen context</li><li>Image-heavy pages where thumbnails need enlargement</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Images are already large enough for detail</li><li>Mobile UX where modals feel disruptive</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="gallery-grid" id="my-lightbox-grid"&gt;
+  &lt;img src="photo-1.jpg" alt="..." onclick="openLightbox(0)"&gt;
+  &lt;img src="photo-2.jpg" alt="..." onclick="openLightbox(1)"&gt;
+&lt;/div&gt;
+
+&lt;div class="gallery-lightbox" id="gallery-lightbox"&gt;
+  &lt;button class="gallery-lightbox-close" onclick="closeLightbox()"&gt;&amp;times;&lt;/button&gt;
+  &lt;button class="gallery-lightbox-nav prev" onclick="navigateLightbox(-1)"&gt;&amp;lsaquo;&lt;/button&gt;
+  &lt;img id="lightbox-img" src="" alt="Lightbox view"&gt;
+  &lt;button class="gallery-lightbox-nav next" onclick="navigateLightbox(1)"&gt;&amp;rsaquo;&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOVER CAPTIONS -->
+    <section class="demo-section" id="hover-captions">
+      <div class="demo-title">Hover Captions</div>
+      <div class="demo-desc">Image cards with title and description that slide up from the bottom on hover. Uses a gradient overlay for readability.</div>
+      <div class="demo-box">
+        <div class="gallery-caption-grid">
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap1/400/300" alt="Mountain landscape">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">Mountain Lake</div>
+              <div class="caption-desc">Alpine reflections at dawn</div>
+            </div>
+          </div>
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap2/400/300" alt="Forest path">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">Forest Path</div>
+              <div class="caption-desc">Autumn foliage trail</div>
+            </div>
+          </div>
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap3/400/300" alt="Ocean sunset">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">Coastal Sunset</div>
+              <div class="caption-desc">Golden hour on the shore</div>
+            </div>
+          </div>
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap4/400/300" alt="City skyline">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">City Skyline</div>
+              <div class="caption-desc">Downtown at twilight</div>
+            </div>
+          </div>
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap5/400/300" alt="Desert dunes">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">Desert Dunes</div>
+              <div class="caption-desc">Sand patterns in afternoon light</div>
+            </div>
+          </div>
+          <div class="gallery-caption-item">
+            <img src="https://picsum.photos/seed/cap6/400/300" alt="Flower garden">
+            <div class="gallery-caption-overlay">
+              <div class="caption-title">Flower Garden</div>
+              <div class="caption-desc">Spring blooms in full color</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Portfolio or product cards where metadata supports the image</li><li>Visual-first layouts where text should not compete</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Caption text is critical — hover is inaccessible on touch</li><li>Images are too small for readable overlay text</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="gallery-caption-grid"&gt;
+  &lt;div class="gallery-caption-item"&gt;
+    &lt;img src="photo.jpg" alt="Description"&gt;
+    &lt;div class="gallery-caption-overlay"&gt;
+      &lt;div class="caption-title"&gt;Title&lt;/div&gt;
+      &lt;div class="caption-desc"&gt;Description text&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAROUSEL -->
+    <section class="demo-section" id="carousel">
+      <div class="demo-title">Carousel</div>
+      <div class="demo-desc">Horizontal scroll strip with scroll-snap alignment. Includes prev/next arrow buttons for non-touch navigation.</div>
+      <div class="demo-box">
+        <div class="gallery-carousel-wrapper">
+          <button class="gallery-carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Previous">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="gallery-carousel" id="demo-carousel">
+            <img src="https://picsum.photos/seed/car1/400/280" alt="Carousel image 1">
+            <img src="https://picsum.photos/seed/car2/400/280" alt="Carousel image 2">
+            <img src="https://picsum.photos/seed/car3/400/280" alt="Carousel image 3">
+            <img src="https://picsum.photos/seed/car4/400/280" alt="Carousel image 4">
+            <img src="https://picsum.photos/seed/car5/400/280" alt="Carousel image 5">
+            <img src="https://picsum.photos/seed/car6/400/280" alt="Carousel image 6">
+            <img src="https://picsum.photos/seed/car7/400/280" alt="Carousel image 7">
+            <img src="https://picsum.photos/seed/car8/400/280" alt="Carousel image 8">
+          </div>
+          <button class="gallery-carousel-btn next" onclick="scrollCarousel(1)" aria-label="Next">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Showcasing a sequence of images in limited horizontal space</li><li>Featured content or product highlights</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>All items must be visible at once (use grid)</li><li>Content is text-heavy — carousels reduce readability</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="gallery-carousel-wrapper"&gt;
+  &lt;button class="gallery-carousel-btn prev" onclick="scrollCarousel(-1)"&gt;&amp;lsaquo;&lt;/button&gt;
+  &lt;div class="gallery-carousel" id="my-carousel"&gt;
+    &lt;img src="photo-1.jpg" alt="Description"&gt;
+    &lt;img src="photo-2.jpg" alt="Description"&gt;
+    &lt;img src="photo-3.jpg" alt="Description"&gt;
+  &lt;/div&gt;
+  &lt;button class="gallery-carousel-btn next" onclick="scrollCarousel(1)"&gt;&amp;rsaquo;&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Lightbox overlay -->
+<div class="gallery-lightbox" id="gallery-lightbox">
+  <button class="gallery-lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  <button class="gallery-lightbox-nav prev" onclick="navigateLightbox(-1)" aria-label="Previous">&lsaquo;</button>
+  <img id="lightbox-img" src="" alt="Lightbox view">
+  <button class="gallery-lightbox-nav next" onclick="navigateLightbox(1)" aria-label="Next">&rsaquo;</button>
+</div>
+
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+<script src="sidebar.js"></script>
+<script>
+  // Lightbox
+  var lightboxImages = [
+    'https://picsum.photos/seed/lb1/1200/900',
+    'https://picsum.photos/seed/lb2/1200/900',
+    'https://picsum.photos/seed/lb3/1200/900',
+    'https://picsum.photos/seed/lb4/1200/900',
+    'https://picsum.photos/seed/lb5/1200/900',
+    'https://picsum.photos/seed/lb6/1200/900'
+  ];
+  var currentLightboxIndex = 0;
+  var lightboxEl = document.getElementById('gallery-lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+
+  function openLightbox(index) {
+    currentLightboxIndex = index;
+    lightboxImg.src = lightboxImages[index];
+    lightboxEl.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightboxEl.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function navigateLightbox(delta) {
+    currentLightboxIndex = (currentLightboxIndex + delta + lightboxImages.length) % lightboxImages.length;
+    lightboxImg.src = lightboxImages[currentLightboxIndex];
+  }
+
+  // Keyboard support
+  document.addEventListener('keydown', function(e) {
+    if (!lightboxEl.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+  });
+
+  // Click backdrop to close
+  lightboxEl.addEventListener('click', function(e) {
+    if (e.target === lightboxEl) closeLightbox();
+  });
+
+  // Carousel scroll
+  function scrollCarousel(direction) {
+    var carousel = document.getElementById('demo-carousel');
+    carousel.scrollBy({ left: direction * 300, behavior: 'smooth' });
+  }
+
+  // Code panel helpers
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    var code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(function() {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

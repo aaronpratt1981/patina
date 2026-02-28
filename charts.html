@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charts — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+      <div class="top-bar-title">Charts</div>
+    </div>
+    <div class="main-header">
+      <h1 class="main-title">Charts</h1>
+      <p class="main-subtitle">Interactive Chart.js charts styled with Patina design tokens. Includes bar, stacked bar, line, area, doughnut, and radar types.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#bar-chart">Bar Chart</a>
+      <a class="page-tab" href="#stacked-bar">Stacked Bar</a>
+      <a class="page-tab" href="#line-chart">Line Chart</a>
+      <a class="page-tab" href="#area-chart">Area Chart</a>
+      <a class="page-tab" href="#doughnut-chart">Doughnut Chart</a>
+      <a class="page-tab" href="#radar-chart">Radar Chart</a>
+    </nav>
+
+    <!-- BAR CHART -->
+    <section class="demo-section" id="bar-chart">
+      <div class="demo-title">Bar Chart</div>
+      <div class="demo-desc">Vertical bars comparing categorical data. Patina colors and rounded corners are applied automatically.</div>
+      <div class="demo-box">
+        <div class="chart-container">
+          <canvas id="demo-bar"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Comparing values across discrete categories</li><li>Showing ranked or ordered data</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Data has a continuous x-axis (use line chart)</li><li>Comparing parts of a whole (use doughnut)</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container"&gt;
+  &lt;canvas id="my-bar"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-bar', 'bar', {
+  labels: ['Mon','Tue','Wed','Thu','Fri'],
+  datasets: [{ label: 'Revenue', data: [8400,11200,9800,14300,16100] }]
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- STACKED BAR CHART -->
+    <section class="demo-section" id="stacked-bar">
+      <div class="demo-title">Stacked Bar Chart</div>
+      <div class="demo-desc">Multiple datasets stacked within each bar to show composition and totals simultaneously.</div>
+      <div class="demo-box">
+        <div class="chart-container">
+          <canvas id="demo-stacked-bar"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Showing composition of totals across categories</li><li>Comparing both individual segments and overall values</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Too many segments make middle values hard to compare</li><li>Individual segment comparison matters more than totals</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container"&gt;
+  &lt;canvas id="my-stacked"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-stacked', 'bar', {
+  labels: ['Q1','Q2','Q3','Q4'],
+  datasets: [
+    { label: 'Product A', data: [12000,15000,18000,14000] },
+    { label: 'Product B', data: [8000,9000,11000,13000] },
+    { label: 'Product C', data: [5000,7000,6000,8000] }
+  ],
+  options: { scales: { x: { stacked: true }, y: { stacked: true } } }
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- LINE CHART -->
+    <section class="demo-section" id="line-chart">
+      <div class="demo-title">Line Chart</div>
+      <div class="demo-desc">Continuous data trends over time with smooth curves and point markers.</div>
+      <div class="demo-box">
+        <div class="chart-container">
+          <canvas id="demo-line"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Showing trends over time</li><li>Comparing multiple series</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Data is categorical with no inherent order</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container"&gt;
+  &lt;canvas id="my-line"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-line', 'line', {
+  labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+  datasets: [
+    { label: 'Users', data: [1200,1900,3000,5000,4200,6100] },
+    { label: 'Sessions', data: [2400,3200,4100,5800,5100,7200] }
+  ]
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- AREA CHART -->
+    <section class="demo-section" id="area-chart">
+      <div class="demo-title">Area Chart</div>
+      <div class="demo-desc">Line chart with a filled region beneath, useful for emphasizing volume or magnitude over time.</div>
+      <div class="demo-box">
+        <div class="chart-container">
+          <canvas id="demo-area"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Emphasizing cumulative totals or volume</li><li>Showing change in magnitude over time</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Multiple overlapping series obscure each other</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container"&gt;
+  &lt;canvas id="my-area"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-area', 'area', {
+  labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+  datasets: [{ label: 'Pageviews', data: [4200,5100,4800,6300,7200,8100] }]
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOUGHNUT CHART -->
+    <section class="demo-section" id="doughnut-chart">
+      <div class="demo-title">Doughnut Chart</div>
+      <div class="demo-desc">Proportional data as slices of a ring. The center hole can display summary values or labels.</div>
+      <div class="demo-box">
+        <div class="chart-container-square" style="max-width:360px;margin:0 auto;">
+          <canvas id="demo-doughnut"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Showing parts of a whole (3-6 slices)</li><li>Proportional data that sums to 100%</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>More than 6 categories (hard to read)</li><li>Comparing values between groups (use bar)</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container-square"&gt;
+  &lt;canvas id="my-doughnut"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-doughnut', 'doughnut', {
+  labels: ['Organic','Direct','Referral','Paid'],
+  datasets: [{ data: [42, 25, 15, 18] }]
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- RADAR CHART -->
+    <section class="demo-section" id="radar-chart">
+      <div class="demo-title">Radar Chart</div>
+      <div class="demo-desc">Multi-axis radial chart for comparing features or skill profiles across dimensions.</div>
+      <div class="demo-box">
+        <div class="chart-container" style="max-width:480px;margin:0 auto;">
+          <canvas id="demo-radar"></canvas>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Comparing profiles across 5-8 dimensions</li><li>Showing strengths and weaknesses</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Too many axes make it unreadable (&gt;8)</li><li>Exact values matter more than shape</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="chart-container"&gt;
+  &lt;canvas id="my-radar"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script&gt;
+patinaChart('my-radar', 'radar', {
+  labels: ['Speed','Reliability','UX','Security','Scalability'],
+  datasets: [
+    { label: 'Product A', data: [85, 70, 90, 60, 75] },
+    { label: 'Product B', data: [65, 85, 70, 80, 90] }
+  ]
+});
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="sidebar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="patina-charts.js"></script>
+<script>
+  // Bar chart
+  patinaChart('demo-bar', 'bar', {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Revenue',
+      data: [8400, 11200, 9800, 14300, 16100, 7200, 5600]
+    }]
+  });
+
+  // Line chart (multi-series)
+  patinaChart('demo-line', 'line', {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [
+      { label: 'Users', data: [1200, 1900, 3000, 5000, 4200, 6100] },
+      { label: 'Sessions', data: [2400, 3200, 4100, 5800, 5100, 7200] }
+    ]
+  });
+
+  // Area chart
+  patinaChart('demo-area', 'area', {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [{ label: 'Pageviews', data: [4200, 5100, 4800, 6300, 7200, 8100] }]
+  });
+
+  // Stacked bar chart
+  patinaChart('demo-stacked-bar', 'bar', {
+    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+    datasets: [
+      { label: 'Product A', data: [12000, 15000, 18000, 14000] },
+      { label: 'Product B', data: [8000, 9000, 11000, 13000] },
+      { label: 'Product C', data: [5000, 7000, 6000, 8000] }
+    ],
+    options: { scales: { x: { stacked: true }, y: { stacked: true } } }
+  });
+
+  // Doughnut chart
+  patinaChart('demo-doughnut', 'doughnut', {
+    labels: ['Organic', 'Direct', 'Referral', 'Paid'],
+    datasets: [{ data: [42, 25, 15, 18] }]
+  });
+
+  // Radar chart
+  patinaChart('demo-radar', 'radar', {
+    labels: ['Speed', 'Reliability', 'UX', 'Security', 'Scalability', 'Cost'],
+    datasets: [
+      { label: 'Product A', data: [85, 70, 90, 60, 75, 80] },
+      { label: 'Product B', data: [65, 85, 70, 80, 90, 55] }
+    ]
+  });
+
+  // Code panel helpers
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    var code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(function() {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

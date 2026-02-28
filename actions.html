@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actions — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .demo-row:last-child { margin-bottom: 0; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+
+  .section-rule { border: none; border-top: 1px solid var(--border); margin: 0 0 48px; }
+
+
+
+  .fab-demo-wrap { position: relative; height: 120px; background: var(--bg-warm); border-radius: var(--radius); overflow: hidden; }
+  .fab-demo-wrap { display: flex; align-items: flex-end; gap: 12px; padding: 16px; height: auto; min-height: 80px; }
+  .fab-demo-wrap .fab { position: relative; bottom: auto; right: auto; left: auto; top: auto; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; }
+
+  /* Speed Dial */
+  .speed-dial-wrap { align-items: flex-end; justify-content: center; gap: 48px; min-height: 280px; }
+  .speed-dial { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .speed-dial .fab { position: relative; bottom: auto; right: auto; left: auto; top: auto; }
+  .speed-dial-actions { display: flex; flex-direction: column-reverse; align-items: center; gap: 10px; margin-bottom: 12px; pointer-events: none; }
+  .speed-dial-item { display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0; transform: scale(0.4) translateY(20px); transition: opacity 0.2s ease, transform 0.2s ease; transition-delay: calc(var(--i, 0) * 0.04s); }
+  .speed-dial.open .speed-dial-item { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+  .speed-dial.open .speed-dial-actions { pointer-events: auto; }
+  .speed-dial-label { position: absolute; right: calc(100% + 8px); background: var(--text); color: var(--white); font-size: 0.75rem; font-weight: 500; padding: 4px 10px; border-radius: var(--radius-xs); white-space: nowrap; pointer-events: none; }
+  .speed-dial-trigger .speed-dial-icon-close { display: none; }
+  .speed-dial-trigger .speed-dial-icon-open { display: block; }
+  .speed-dial.open .speed-dial-trigger .speed-dial-icon-close { display: block; }
+  .speed-dial.open .speed-dial-trigger .speed-dial-icon-open { display: none; }
+  .speed-dial-trigger { transition: transform 0.2s ease; }
+
+  @media (max-width: 860px) {
+    .demo-row { flex-wrap: wrap; }
+    pre { overflow-x: auto; }
+    .fab-demo-wrap { flex-wrap: wrap; }
+    .speed-dial-wrap { flex-wrap: wrap; gap: 32px; min-height: auto; }
+  }
+
+  @media (max-width: 480px) {
+    .demo-box { padding: 16px; }
+    .fab-demo-wrap { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="top-bar-title">Actions</div>
+    </div>
+
+    <!-- Components: btn, btn-primary, btn-secondary, btn-ghost, btn-danger, btn-tonal, btn-elevated, btn-accent2, btn-accent3, btn-tonal-accent2, btn-tonal-accent3, btn-sm, btn-lg, btn-icon, fab, fab-sm, fab-extended, fab-accent2, fab-accent3, seg-group, seg-btn, section-rule, toc, toc-link, demo-section, demo-box, demo-row, demo-label, code-panel, usage-block, social-btn, social-btns, or-divider -->
+
+    <div class="main-header">
+      <h1 class="main-title">Actions</h1>
+      <p class="main-subtitle">Buttons, FABs, and segmented controls for triggering operations in the Patina design system.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#variants">Variants</a>
+      <a class="page-tab" href="#sizes">Sizes</a>
+      <a class="page-tab" href="#icons">Icons &amp; Loading</a>
+      <a class="page-tab" href="#fab">FAB</a>
+      <a class="page-tab" href="#segmented">Segmented</a>
+      <a class="page-tab" href="#social-buttons">Social Buttons</a>
+      <a class="page-tab" href="#or-divider">Or-Divider</a>
+    </nav>
+
+    <!-- BUTTON VARIANTS -->
+    <div id="variants" class="demo-section">
+      <h2 class="demo-title">Button Variants</h2>
+      <p class="demo-desc">Six semantic variants covering every action priority from primary CTAs to destructive operations, plus accent color variants.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">Default</div>
+        <div class="demo-row">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-secondary">Secondary</button>
+          <button class="btn btn-ghost">Ghost</button>
+          <button class="btn btn-danger">Danger</button>
+          <button class="btn btn-tonal">Tonal</button>
+          <button class="btn btn-elevated">Elevated</button>
+        </div>
+
+        <div class="demo-label">Accent Solid</div>
+        <div class="demo-row">
+          <button class="btn btn-accent2">Accent 2</button>
+          <button class="btn btn-accent3">Accent 3</button>
+        </div>
+
+        <div class="demo-label">Accent Tonal</div>
+        <div class="demo-row">
+          <button class="btn-tonal-accent2">Tonal Accent 2</button>
+          <button class="btn-tonal-accent3">Tonal Accent 3</button>
+        </div>
+
+        <div class="demo-label">Disabled</div>
+        <div class="demo-row">
+          <button class="btn btn-primary" disabled>Primary</button>
+          <button class="btn btn-secondary" disabled>Secondary</button>
+          <button class="btn btn-ghost" disabled>Ghost</button>
+          <button class="btn btn-danger" disabled>Danger</button>
+          <button class="btn btn-tonal" disabled>Tonal</button>
+          <button class="btn btn-elevated" disabled>Elevated</button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Primary for main CTA, Secondary for supporting actions, Ghost for low-emphasis.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Using Primary for more than one action per section, or Danger for non-destructive actions.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;button class="btn btn-primary"&gt;Primary&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Secondary&lt;/button&gt;
+&lt;button class="btn btn-ghost"&gt;Ghost&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;Danger&lt;/button&gt;
+&lt;button class="btn btn-tonal"&gt;Tonal&lt;/button&gt;
+&lt;button class="btn btn-elevated"&gt;Elevated&lt;/button&gt;
+
+&lt;!-- Accent color variants --&gt;
+&lt;button class="btn btn-accent2"&gt;Accent 2&lt;/button&gt;
+&lt;button class="btn btn-accent3"&gt;Accent 3&lt;/button&gt;
+
+&lt;!-- Tonal accent variants --&gt;
+&lt;button class="btn-tonal-accent2"&gt;Tonal Accent 2&lt;/button&gt;
+&lt;button class="btn-tonal-accent3"&gt;Tonal Accent 3&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- BUTTON SIZES -->
+    <div id="sizes" class="demo-section">
+      <h2 class="demo-title">Button Sizes</h2>
+      <p class="demo-desc">Three sizes for different layout contexts. Default handles most cases.</p>
+
+      <div class="demo-box">
+        <div class="demo-row" style="align-items:flex-end;">
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary">Default</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+        <div class="demo-row" style="align-items:flex-end;">
+          <button class="btn btn-secondary btn-sm">Small</button>
+          <button class="btn btn-secondary">Default</button>
+          <button class="btn btn-secondary btn-lg">Large</button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Small for inline/table contexts, Large for hero CTAs.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Mixing sizes in the same button row.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;button class="btn btn-primary btn-sm"&gt;Small&lt;/button&gt;
+&lt;button class="btn btn-primary"&gt;Default&lt;/button&gt;
+&lt;button class="btn btn-primary btn-lg"&gt;Large&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- ICONS & LOADING -->
+    <div id="icons" class="demo-section">
+      <h2 class="demo-title">With Icons &amp; Loading</h2>
+      <p class="demo-desc">Icons reinforce meaning. Use 16px or 20px SVG line icons at 1.5 stroke weight.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">With Icons</div>
+        <div class="demo-row">
+          <!-- Add Item -->
+          <button class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3v10M3 8h10"/>
+            </svg>
+            Add Item
+          </button>
+
+          <!-- Export -->
+          <button class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5l-4-4-4 4M8 2v10"/>
+              <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
+            </svg>
+            Export
+          </button>
+
+          <!-- Icon only: Search -->
+          <button class="btn btn-secondary btn-icon" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="7" cy="7" r="4.5"/>
+              <path d="M10.5 10.5l3 3"/>
+            </svg>
+          </button>
+
+          <!-- Icon only: More -->
+          <button class="btn btn-ghost btn-icon" aria-label="More options">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="4" cy="8" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="demo-label">Loading State</div>
+        <div class="demo-row">
+          <button class="btn btn-primary" id="loadingBtn" style="display:inline-flex;align-items:center;gap:8px;min-width:120px;" onclick="triggerLoading(this)">
+            Save Changes
+          </button>
+          <span style="font-size:0.8rem;color:var(--text-muted);">Click to simulate loading</span>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Icons paired with labels for clarity; icon-only for well-known actions (search, close).</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Icon meaning is ambiguous without a label; always add aria-label for icon-only buttons.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;!-- Icon + label --&gt;
+&lt;button class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;"&gt;
+  &lt;svg width="16" height="16" ...&gt;...&lt;/svg&gt;
+  Add Item
+&lt;/button&gt;
+
+&lt;!-- Icon only --&gt;
+&lt;button class="btn btn-secondary btn-icon" aria-label="Search"&gt;
+  &lt;svg width="16" height="16" ...&gt;...&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;!-- Loading state --&gt;
+&lt;button class="btn btn-primary" disabled&gt;
+  &lt;span class="spinner"&gt;&lt;/span&gt; Saving...
+&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- FAB -->
+    <div id="fab" class="demo-section">
+      <h2 class="demo-title">FAB (Floating Action Button)</h2>
+      <p class="demo-desc">Floating action buttons surface the primary action of a screen. Position at the bottom-right corner.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">Variants</div>
+        <div class="fab-demo-wrap">
+          <button class="fab" aria-label="Default"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg></button>
+          <button class="fab fab-sm" aria-label="Small"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></button>
+          <button class="fab fab-accent2" aria-label="Accent2"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg></button>
+          <button class="fab fab-sm fab-accent2" aria-label="Accent2 small"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></button>
+          <button class="fab fab-accent3" aria-label="Accent3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg></button>
+          <button class="fab fab-sm fab-accent3" aria-label="Accent3 small"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></button>
+          <button class="fab fab-extended"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg> New Project</button>
+        </div>
+
+        <div class="demo-label" style="margin-top:24px">Speed Dial (click to open)</div>
+        <div class="fab-demo-wrap speed-dial-wrap">
+          <!-- Accent speed dial -->
+          <div class="speed-dial">
+            <div class="speed-dial-actions">
+              <div class="speed-dial-item" style="--i:1"><span class="speed-dial-label">Edit</span><button class="fab fab-sm" aria-label="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:2"><span class="speed-dial-label">Share</span><button class="fab fab-sm" aria-label="Share"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:3"><span class="speed-dial-label">Delete</span><button class="fab fab-sm" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div>
+            </div>
+            <button class="fab speed-dial-trigger" aria-label="Actions" onclick="toggleSpeedDial(this)">
+              <svg class="speed-dial-icon-open" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+              <svg class="speed-dial-icon-close" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            </button>
+          </div>
+
+          <!-- Accent2 speed dial -->
+          <div class="speed-dial">
+            <div class="speed-dial-actions">
+              <div class="speed-dial-item" style="--i:1"><span class="speed-dial-label">Upload</span><button class="fab fab-sm fab-accent2" aria-label="Upload"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:2"><span class="speed-dial-label">Folder</span><button class="fab fab-sm fab-accent2" aria-label="New folder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:3"><span class="speed-dial-label">Note</span><button class="fab fab-sm fab-accent2" aria-label="New note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button></div>
+            </div>
+            <button class="fab fab-accent2 speed-dial-trigger" aria-label="Actions" onclick="toggleSpeedDial(this)">
+              <svg class="speed-dial-icon-open" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+              <svg class="speed-dial-icon-close" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            </button>
+          </div>
+
+          <!-- Accent3 speed dial -->
+          <div class="speed-dial">
+            <div class="speed-dial-actions">
+              <div class="speed-dial-item" style="--i:1"><span class="speed-dial-label">Message</span><button class="fab fab-sm fab-accent3" aria-label="Message"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:2"><span class="speed-dial-label">Email</span><button class="fab fab-sm fab-accent3" aria-label="Email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></button></div>
+              <div class="speed-dial-item" style="--i:3"><span class="speed-dial-label">Call</span><button class="fab fab-sm fab-accent3" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></button></div>
+            </div>
+            <button class="fab fab-accent3 speed-dial-trigger" aria-label="Actions" onclick="toggleSpeedDial(this)">
+              <svg class="speed-dial-icon-open" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+              <svg class="speed-dial-icon-close" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Single primary action per screen.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Page has multiple competing primary actions.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;!-- Standard FAB --&gt;
+&lt;button class="fab" aria-label="Create"&gt;
+  &lt;svg ...&gt;&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;!-- Small / Extended / Accent variants --&gt;
+&lt;button class="fab fab-sm"&gt;...&lt;/button&gt;
+&lt;button class="fab fab-extended"&gt;...Label&lt;/button&gt;
+&lt;button class="fab fab-accent2"&gt;...&lt;/button&gt;
+&lt;button class="fab fab-accent3"&gt;...&lt;/button&gt;
+
+&lt;!-- Speed Dial --&gt;
+&lt;div class="speed-dial"&gt;
+  &lt;div class="speed-dial-actions"&gt;
+    &lt;div class="speed-dial-item" style="--i:1"&gt;
+      &lt;span class="speed-dial-label"&gt;Edit&lt;/span&gt;
+      &lt;button class="fab fab-sm" aria-label="Edit"&gt;
+        &lt;svg ...&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="speed-dial-item" style="--i:2"&gt;
+      &lt;span class="speed-dial-label"&gt;Share&lt;/span&gt;
+      &lt;button class="fab fab-sm" aria-label="Share"&gt;...&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;button class="fab speed-dial-trigger"
+          onclick="toggleSpeedDial(this)"&gt;
+    &lt;svg class="speed-dial-icon-open"&gt;...&lt;/svg&gt;
+    &lt;svg class="speed-dial-icon-close"&gt;...&lt;/svg&gt;
+  &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SEGMENTED BUTTONS -->
+    <div id="segmented" class="demo-section">
+      <h2 class="demo-title">Segmented Buttons</h2>
+      <p class="demo-desc">Mutually exclusive selection within a compact group. Use for view modes or period filters.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">Text Segmented</div>
+        <div class="demo-row">
+          <div class="seg-group" role="group" aria-label="Time period">
+            <button class="seg-btn active" onclick="setSeg(this)">Day</button>
+            <button class="seg-btn" onclick="setSeg(this)">Week</button>
+            <button class="seg-btn" onclick="setSeg(this)">Month</button>
+            <button class="seg-btn" onclick="setSeg(this)">Year</button>
+          </div>
+        </div>
+
+        <div class="demo-label">Icon Segmented</div>
+        <div class="demo-row">
+          <div class="seg-group" role="group" aria-label="View mode">
+            <button class="seg-btn active" onclick="setSeg(this)" aria-label="Grid view">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="5" height="5" rx="1"/>
+                <rect x="9" y="2" width="5" height="5" rx="1"/>
+                <rect x="2" y="9" width="5" height="5" rx="1"/>
+                <rect x="9" y="9" width="5" height="5" rx="1"/>
+              </svg>
+            </button>
+            <button class="seg-btn" onclick="setSeg(this)" aria-label="List view">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h9M4 8h9M4 12h9"/>
+                <circle cx="2" cy="4" r="0.75" fill="currentColor" stroke="none"/>
+                <circle cx="2" cy="8" r="0.75" fill="currentColor" stroke="none"/>
+                <circle cx="2" cy="12" r="0.75" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>View mode switches, time period filters.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>More than 5 options, or options aren't mutually exclusive.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="seg-group" role="group" aria-label="Time period"&gt;
+  &lt;button class="seg-btn active" onclick="setSeg(this)"&gt;Day&lt;/button&gt;
+  &lt;button class="seg-btn" onclick="setSeg(this)"&gt;Week&lt;/button&gt;
+  &lt;button class="seg-btn" onclick="setSeg(this)"&gt;Month&lt;/button&gt;
+  &lt;button class="seg-btn" onclick="setSeg(this)"&gt;Year&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SOCIAL BUTTONS -->
+    <div class="demo-section" id="social-buttons">
+      <h2 class="demo-title">Social Buttons</h2>
+      <p class="demo-desc">OAuth and social login buttons. Outlined style with provider icon and label.</p>
+      <div class="demo-box">
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;">
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            Continue with GitHub
+          </button>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <strong>When to use:</strong>
+          <ul><li>Auth pages offering third-party login (Google, GitHub, etc.).</li></ul>
+          <strong>Avoid when:</strong>
+          <ul><li>Non-auth contexts — use standard buttons.</li></ul>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="social-btns"&gt;
+  &lt;button class="social-btn"&gt;
+    &lt;svg&gt;...&lt;/svg&gt; Continue with Google
+  &lt;/button&gt;
+  &lt;button class="social-btn"&gt;
+    &lt;svg&gt;...&lt;/svg&gt; Continue with GitHub
+  &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- OR-DIVIDER -->
+    <div class="demo-section" id="or-divider">
+      <h2 class="demo-title">Or-Divider</h2>
+      <p class="demo-desc">Horizontal rule with centered text label. Used to separate auth methods.</p>
+      <div class="demo-box">
+        <div style="display:flex;align-items:center;gap:16px;max-width:320px;">
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+          <span style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">or</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <strong>When to use:</strong>
+          <ul><li>Between primary form and social login options.</li></ul>
+          <strong>Avoid when:</strong>
+          <ul><li>Standard content separation — use a plain divider.</li></ul>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="or-divider"&gt;or&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function setSeg(el) {
+    el.closest('[role="group"]').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function triggerLoading(btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving...';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = 'Save Changes';
+    }, 2200);
+  }
+
+  function toggleSpeedDial(trigger) {
+    const dial = trigger.closest('.speed-dial');
+    const wasOpen = dial.classList.contains('open');
+    // Close all open speed dials first
+    document.querySelectorAll('.speed-dial.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) dial.classList.add('open');
+  }
+  // Close speed dials when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.speed-dial')) {
+      document.querySelectorAll('.speed-dial.open').forEach(d => d.classList.remove('open'));
+    }
+  });
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

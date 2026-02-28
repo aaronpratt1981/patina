@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Detail — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  .detail-hero { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 32px; }
+  .detail-icon { width: 60px; height: 60px; border-radius: var(--radius); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; background: var(--highlight-bg); }
+  .detail-info { flex: 1; }
+  .detail-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .detail-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .detail-meta-item { font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .detail-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+
+  .detail-grid { display: grid; grid-template-columns: 1fr 300px; gap: 28px; }
+
+  .tab-content { display: none; animation: fadeIn 0.2s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .task-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .task-item:last-child { border-bottom: none; }
+  .task-check {
+    appearance: none; width: 20px; height: 20px; border: 1.5px solid var(--border);
+    border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: all 0.2s; position: relative;
+  }
+  .task-check:checked { background: var(--accent); border-color: var(--accent); }
+  .task-check:checked::after { content: '✓'; position: absolute; top: 0; left: 4.5px; color: white; font-size: 0.7rem; font-weight: 700; }
+  .task-check:checked ~ .task-text { text-decoration: line-through; color: var(--text-dim); }
+  .task-text { flex: 1; font-size: 0.88rem; color: var(--text-secondary); }
+  .task-due { font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-dim); }
+
+  .comment-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .comment-item:last-child { border-bottom: none; }
+  .comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .comment-name { font-size: 0.85rem; font-weight: 600; }
+  .comment-time { font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono); }
+  .comment-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+  .comment-box { display: flex; gap: 12px; margin-top: 20px; }
+  .comment-box textarea { flex: 1; }
+
+  .file-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .file-item:last-child { border-bottom: none; }
+  .file-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--bg-warm); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .file-info { flex: 1; }
+  .file-name { font-size: 0.88rem; font-weight: 600; }
+  .file-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+  .meta-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+  .meta-value { font-size: 0.85rem; font-weight: 500; text-align: right; }
+  /* detail sidebar activity dots already use var() references */
+
+  @media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:1000px;">
+    <!-- Components: breadcrumbs, detail-hero, detail-icon, detail-title, detail-meta, tabs, tab, tab-content, card, task-item, task-check, progress-row, progress-track, progress-fill, avatar, avatar-sm, badge, btn, btn-primary, btn-secondary, btn-ghost, btn-sm, file-item, file-icon, meta-row -->
+
+    <nav class="breadcrumbs mb-16">
+      <span class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></span>
+      <span class="breadcrumb-item"><a href="table-list.html">Projects</a></span>
+      <span class="breadcrumb-item">Brand Refresh</span>
+    </nav>
+
+    <div class="detail-hero">
+      <div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+      <div class="detail-info">
+        <h1 class="detail-title">Brand Refresh</h1>
+        <div class="detail-meta">
+          <span class="badge badge-warning">In Review</span>
+          <span class="detail-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Created Dec 3, 2025</span>
+          <span class="detail-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg> 4 members</span>
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn-secondary btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+        <button class="btn btn-primary btn-sm">Share</button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div>
+        <div class="tabs">
+          <div class="tab active" onclick="showTab('tasks',this)">Tasks (6)</div>
+          <div class="tab" onclick="showTab('comments',this)">Comments (3)</div>
+          <div class="tab" onclick="showTab('files',this)">Files (4)</div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="tab-content active" id="tab-tasks">
+          <div class="card">
+            <div class="task-item"><input type="checkbox" class="task-check" checked><span class="task-text">Define new color palette</span><span class="task-due">Dec 10</span></div>
+            <div class="task-item"><input type="checkbox" class="task-check" checked><span class="task-text">Typography audit and selection</span><span class="task-due">Dec 15</span></div>
+            <div class="task-item"><input type="checkbox" class="task-check" checked><span class="task-text">Create logo variations</span><span class="task-due">Jan 5</span></div>
+            <div class="task-item"><input type="checkbox" class="task-check"><span class="task-text">Design business card templates</span><span class="task-due">Feb 20</span></div>
+            <div class="task-item"><input type="checkbox" class="task-check"><span class="task-text">Update brand guidelines document</span><span class="task-due">Mar 1</span></div>
+            <div class="task-item"><input type="checkbox" class="task-check"><span class="task-text">Final stakeholder review</span><span class="task-due">Mar 10</span></div>
+          </div>
+          <div class="mt-16">
+            <div class="progress-row">
+              <div class="progress-label"><span>Completion</span><span>3 / 6 tasks</span></div>
+              <div class="progress-track"><div class="progress-fill fill-accent" style="width:50%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="tab-content" id="tab-comments">
+          <div class="card">
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-accent">SC</div>
+                <span class="comment-name">Sarah Connor</span>
+                <span class="comment-time">2 days ago</span>
+              </div>
+              <div class="comment-body">The new color palette looks great. I think the warm tones align well with the direction we discussed. Can we also explore a darker variant for the footer sections?</div>
+            </div>
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-highlight">MW</div>
+                <span class="comment-name">Marcus Webb</span>
+                <span class="comment-time">1 day ago</span>
+              </div>
+              <div class="comment-body">Agreed on the palette. I've started mocking up the business card templates — will share a draft by end of week.</div>
+            </div>
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="avatar avatar-sm avatar-info">PS</div>
+                <span class="comment-name">Priya Sharma</span>
+                <span class="comment-time">3 hours ago</span>
+              </div>
+              <div class="comment-body">Just uploaded the final logo variations. Please review when you get a chance — I included both horizontal and stacked layouts.</div>
+            </div>
+          </div>
+          <div class="comment-box">
+            <div class="avatar avatar-sm avatar-accent" style="margin-top:4px;">JD</div>
+            <textarea class="field-input" rows="2" placeholder="Write a comment…" style="min-height:auto;"></textarea>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-end;">Post</button>
+          </div>
+        </div>
+
+        <!-- Files -->
+        <div class="tab-content" id="tab-files">
+          <div class="card">
+            <div class="file-item">
+              <div class="file-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="file-info"><div class="file-name">Brand-Guidelines-v2.pdf</div><div class="file-meta">2.4 MB · Uploaded by Sarah · Jan 8</div></div>
+              <button class="btn btn-ghost btn-sm" style="color:var(--accent);">Download</button>
+            </div>
+            <div class="file-item">
+              <div class="file-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+              <div class="file-info"><div class="file-name">Logo-Variations-Final.zip</div><div class="file-meta">8.1 MB · Uploaded by Priya · 3 hours ago</div></div>
+              <button class="btn btn-ghost btn-sm" style="color:var(--accent);">Download</button>
+            </div>
+            <div class="file-item">
+              <div class="file-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+              <div class="file-info"><div class="file-name">Color-Palette.fig</div><div class="file-meta">1.1 MB · Uploaded by Marcus · Dec 12</div></div>
+              <button class="btn btn-ghost btn-sm" style="color:var(--accent);">Download</button>
+            </div>
+            <div class="file-item">
+              <div class="file-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+              <div class="file-info"><div class="file-name">Typography-Audit.xlsx</div><div class="file-meta">340 KB · Uploaded by Sarah · Dec 8</div></div>
+              <button class="btn btn-ghost btn-sm" style="color:var(--accent);">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Meta -->
+      <div>
+        <div class="card mb-24">
+          <div class="card-title mb-16" style="font-size:0.95rem;">Details</div>
+          <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value"><span class="badge badge-warning">In Review</span></span></div>
+          <div class="meta-row"><span class="meta-label">Priority</span><span class="meta-value"><span class="badge badge-accent">High</span></span></div>
+          <div class="meta-row"><span class="meta-label">Due Date</span><span class="meta-value" style="font-family:var(--font-mono); font-size:0.82rem;">Mar 10, 2026</span></div>
+          <div class="meta-row"><span class="meta-label">Created</span><span class="meta-value" style="font-family:var(--font-mono); font-size:0.82rem;">Dec 3, 2025</span></div>
+          <div class="meta-row"><span class="meta-label">Owner</span><span class="meta-value">Sarah Connor</span></div>
+        </div>
+
+        <div class="card mb-24">
+          <div class="card-title mb-16" style="font-size:0.95rem;">Team</div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px;"><div class="avatar avatar-sm avatar-accent">SC</div><div><div style="font-size:0.85rem; font-weight:600;">Sarah Connor</div><div style="font-size:0.72rem; color:var(--text-muted);">Owner</div></div></div>
+            <div style="display:flex; align-items:center; gap:10px;"><div class="avatar avatar-sm avatar-highlight">MW</div><div><div style="font-size:0.85rem; font-weight:600;">Marcus Webb</div><div style="font-size:0.72rem; color:var(--text-muted);">Editor</div></div></div>
+            <div style="display:flex; align-items:center; gap:10px;"><div class="avatar avatar-sm avatar-info">PS</div><div><div style="font-size:0.85rem; font-weight:600;">Priya Sharma</div><div style="font-size:0.72rem; color:var(--text-muted);">Editor</div></div></div>
+            <div style="display:flex; align-items:center; gap:10px;"><div class="avatar avatar-sm avatar-success">JD</div><div><div style="font-size:0.85rem; font-weight:600;">Jane Doe</div><div style="font-size:0.72rem; color:var(--text-muted);">Viewer</div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title mb-16" style="font-size:0.95rem;">Activity</div>
+          <div style="display:flex; flex-direction:column; gap:14px; font-size:0.82rem;">
+            <div style="display:flex; gap:10px;"><div style="width:6px; height:6px; border-radius:50%; background:var(--info); margin-top:6px; flex-shrink:0;"></div><div><span style="font-weight:600;">Priya</span> <span style="color:var(--text-muted);">uploaded Logo-Variations-Final.zip</span><div style="font-size:0.72rem; color:var(--text-dim); font-family:var(--font-mono); margin-top:2px;">3 hours ago</div></div></div>
+            <div style="display:flex; gap:10px;"><div style="width:6px; height:6px; border-radius:50%; background:var(--highlight); margin-top:6px; flex-shrink:0;"></div><div><span style="font-weight:600;">Marcus</span> <span style="color:var(--text-muted);">completed "Create logo variations"</span><div style="font-size:0.72rem; color:var(--text-dim); font-family:var(--font-mono); margin-top:2px;">Yesterday</div></div></div>
+            <div style="display:flex; gap:10px;"><div style="width:6px; height:6px; border-radius:50%; background:var(--accent); margin-top:6px; flex-shrink:0;"></div><div><span style="font-weight:600;">Sarah</span> <span style="color:var(--text-muted);">changed status to "In Review"</span><div style="font-size:0.72rem; color:var(--text-dim); font-family:var(--font-mono); margin-top:2px;">2 days ago</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function showTab(id, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

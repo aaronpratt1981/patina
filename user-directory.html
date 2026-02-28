@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Directory — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.user-card { cursor: pointer; position: relative; }
+.list-view-wrap { display: none; }
+[data-view="list"] .user-grid { display: none; }
+[data-view="list"] .list-view-wrap { display: block; }
+.avatar-cell { display: flex; align-items: center; gap: 12px; }
+.user-card { padding: 14px; }
+.user-card-body { padding: 0; }
+.user-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.user-card-name { font-weight: 600; font-size: 0.9rem; line-height: 1.3; }
+.user-card-role { font-size: 0.78rem; color: var(--text-muted); }
+.user-card-status { position: absolute; top: 12px; right: 12px; }
+.user-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.user-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.user-card-tags .chip { font-size: 0.7rem; padding: 2px 8px; }
+.user-card-tags .badge { font-size: 0.7rem; }
+.user-card-actions { display: flex; gap: 4px; }
+@media (max-width: 860px) {
+  .search-bar[style*="width:260px"] { width: 100% !important; }
+  .list-view-wrap th:nth-child(3),
+  .list-view-wrap td:nth-child(3),
+  .list-view-wrap th:nth-child(5),
+  .list-view-wrap td:nth-child(5) { display: none; }
+  .list-view-wrap .data-table td { padding: 10px 10px; font-size: 0.82rem; }
+  .list-view-wrap .data-table th { padding: 10px 10px; }
+}
+@media (max-width: 480px) {
+  .list-view-wrap th:nth-child(2),
+  .list-view-wrap td:nth-child(2) { display: none; }
+  .avatar-cell { gap: 8px; }
+  .list-view-wrap .data-table td { padding: 8px 6px; font-size: 0.78rem; }
+  .list-view-wrap .data-table th { padding: 8px 6px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" id="dir-root" data-view="grid">
+    <!-- Components: user-grid, user-card, avatar, chip-filter, toolbar, list-view-wrap, data-table -->
+    <div class="main-header-row">
+      <div>
+        <h1 class="main-title">User Directory</h1>
+        <p class="main-subtitle">14 team members across 4 departments.</p>
+      </div>
+      <button class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Invite member
+      </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-bar" style="width:260px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by name or role…" id="search-input" oninput="filterUsers()">
+      </div>
+      <div class="seg-group" id="view-seg">
+        <button class="seg-btn active" onclick="setView('grid', this)" title="Grid">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="seg-btn" onclick="setView('list', this)" title="List">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="chip-bar" id="chip-filters">
+      <span class="chip chip-filter active" onclick="toggleFilter(this,'all')" data-filter="all">All</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'design')" data-filter="design">Design</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'engineering')" data-filter="engineering">Engineering</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'product')" data-filter="product">Product</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'marketing')" data-filter="marketing">Marketing</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'active')" data-filter="active">Active</span>
+      <span class="chip chip-filter" onclick="toggleFilter(this,'away')" data-filter="away">Away</span>
+    </div>
+
+    <!-- Grid view -->
+    <div class="user-grid" id="user-grid">
+      <div class="card user-card card--clickable" data-dept="design" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-accent">SR</div>
+            <div>
+              <div class="user-card-name">Sarah Reynolds</div>
+              <div class="user-card-role">Design Lead</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Design</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="engineering" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-info">MK</div>
+            <div>
+              <div class="user-card-name">Marcus Kim</div>
+              <div class="user-card-role">Senior Engineer</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Engineering</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="product" data-status="away">
+        <div class="user-card-body">
+          <span class="badge badge-warning user-card-status">Away</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-highlight">AL</div>
+            <div>
+              <div class="user-card-name">Amara Levi</div>
+              <div class="user-card-role">Product Manager</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Product</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="engineering" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-success">TN</div>
+            <div>
+              <div class="user-card-name">Tom Nguyen</div>
+              <div class="user-card-role">Full-Stack Engineer</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Engineering</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="design" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-accent">OC</div>
+            <div>
+              <div class="user-card-name">Olivia Chen</div>
+              <div class="user-card-role">UX Designer</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Design</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="marketing" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-info">NP</div>
+            <div>
+              <div class="user-card-name">Nadia Park</div>
+              <div class="user-card-role">Marketing Lead</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Marketing</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="product" data-status="active">
+        <div class="user-card-body">
+          <span class="badge badge-success user-card-status">Active</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-highlight">JB</div>
+            <div>
+              <div class="user-card-name">James Brown</div>
+              <div class="user-card-role">Head of Product</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Product</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card user-card card--clickable" data-dept="engineering" data-status="away">
+        <div class="user-card-body">
+          <span class="badge badge-warning user-card-status">Away</span>
+          <div class="user-card-header">
+            <div class="avatar avatar-md avatar-success">RP</div>
+            <div>
+              <div class="user-card-name">Riya Patel</div>
+              <div class="user-card-role">DevOps Engineer</div>
+            </div>
+          </div>
+          <div class="user-card-footer">
+            <div class="user-card-tags">
+              <span class="chip">Engineering</span>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List view -->
+    <div class="list-view-wrap">
+      <div class="card card--flat">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-accent">SR</div><span class="cell-primary">Sarah Reynolds</span></div></td>
+                <td>Design Lead</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Design</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Jan 2024</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-info">MK</div><span class="cell-primary">Marcus Kim</span></div></td>
+                <td>Senior Engineer</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Engineering</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Mar 2023</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-highlight">AL</div><span class="cell-primary">Amara Levi</span></div></td>
+                <td>Product Manager</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Product</span></td>
+                <td><span class="badge badge-warning">Away</span></td>
+                <td class="t-muted t-small">Jun 2023</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-success">TN</div><span class="cell-primary">Tom Nguyen</span></div></td>
+                <td>Full-Stack Engineer</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Engineering</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Sep 2022</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-accent">OC</div><span class="cell-primary">Olivia Chen</span></div></td>
+                <td>UX Designer</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Design</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Nov 2024</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-info">NP</div><span class="cell-primary">Nadia Park</span></div></td>
+                <td>Marketing Lead</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Marketing</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Feb 2023</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-highlight">JB</div><span class="cell-primary">James Brown</span></div></td>
+                <td>Head of Product</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Product</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="t-muted t-small">Aug 2021</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+              <tr>
+                <td><div class="avatar-cell"><div class="avatar avatar-sm avatar-success">RP</div><span class="cell-primary">Riya Patel</span></div></td>
+                <td>DevOps Engineer</td>
+                <td><span class="chip" style="font-size:0.72rem;padding:3px 10px;">Engineering</span></td>
+                <td><span class="badge badge-warning">Away</span></td>
+                <td class="t-muted t-small">Oct 2023</td>
+                <td><button class="btn btn-ghost btn-sm">Message</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="sidebar.js"></script>
+<script>
+function setView(view, btn) {
+  document.getElementById('dir-root').dataset.view = view;
+  document.querySelectorAll('#view-seg .seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+let activeFilter = 'all';
+function toggleFilter(chip, filter) {
+  document.querySelectorAll('#chip-filters .chip-filter').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  activeFilter = filter;
+  applyFilters();
+}
+
+function filterUsers() { applyFilters(); }
+
+function applyFilters() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  document.querySelectorAll('#user-grid .user-card').forEach(card => {
+    const nameEl = card.querySelector('.user-card-name');
+    const roleEl = card.querySelector('.user-card-role');
+    const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+    const role = roleEl ? roleEl.textContent.toLowerCase() : '';
+    const dept = card.dataset.dept;
+    const status = card.dataset.status;
+    const matchSearch = !search || name.includes(search) || role.includes(search);
+    const matchFilter = activeFilter === 'all' || dept === activeFilter || status === activeFilter;
+    card.style.display = matchSearch && matchFilter ? '' : 'none';
+  });
+}
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

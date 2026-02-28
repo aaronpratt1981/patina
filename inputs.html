@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inputs — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-row { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .demo-row:last-child { margin-bottom: 0; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+  .demo-col { flex: 1; min-width: 220px; }
+
+  .section-rule { border: none; border-top: 1px solid var(--border); margin: 0 0 48px; }
+
+  /* Text edit toolbar */
+  .text-toolbar { display: flex; align-items: center; gap: 2px; padding: 6px 8px; background: var(--white); border: 1.5px solid var(--border); border-bottom: none; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+  .text-toolbar-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: none; background: transparent; border-radius: var(--radius-xs); color: var(--text-secondary); cursor: pointer; transition: background 0.12s, color 0.12s; font-family: var(--font-body); font-size: 0.85rem; }
+  .text-toolbar-btn:hover { background: var(--bg-warm); color: var(--text); }
+  .text-toolbar-btn.active { background: var(--accent-bg); color: var(--accent); }
+  .text-toolbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+  .text-toolbar-select { border: none; background: transparent; font-family: var(--font-body); font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; padding: 4px 8px; border-radius: var(--radius-xs); }
+  .text-toolbar-select:hover { background: var(--bg-warm); }
+  .text-toolbar + textarea.field-input { border-radius: 0 0 var(--radius-sm) var(--radius-sm); border-top-color: var(--border); }
+
+  /* Slider value display */
+  .slider-row { display: flex; align-items: center; gap: 14px; }
+  .slider-val { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); min-width: 40px; }
+
+  /* Switch layout wrappers (page-local) */
+  .switch-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .switch-row:last-child { border-bottom: none; }
+  .switch-info { flex: 1; }
+  .switch-label-text { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+  .switch-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* Radio option card */
+  .radio-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; }
+  .radio-option:last-child { margin-bottom: 0; }
+  .radio-option:hover { border-color: var(--border-strong); }
+  .radio-option.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .radio-option-info { flex: 1; }
+  .radio-option-name { font-size: 0.9rem; font-weight: 500; }
+  .radio-option-price { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+  @media (max-width: 860px) {
+    .demo-row { flex-wrap: wrap; }
+    .demo-col { min-width: 100%; }
+    pre { overflow-x: auto; }
+    .text-toolbar { flex-wrap: wrap; }
+    .picklist { max-width: 100%; }
+    .date-picker { max-width: 100%; }
+    .time-picker { flex-wrap: wrap; gap: 8px; }
+    .time-picker input[type="text"],
+    .time-picker select { max-width: 60px; }
+    .slider-row { flex-wrap: wrap; }
+  }
+
+  @media (max-width: 480px) {
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+      <div class="top-bar-title">Inputs</div>
+    </div>
+
+    <!-- Components: field, field-label, field-input, field-hint, field-error, slider, toggle-track, toggle-thumb, section-rule, toc, toc-link, demo-section, demo-box, demo-row, demo-label, code-panel, usage-block -->
+
+    <div class="main-header">
+      <h1 class="main-title">Inputs</h1>
+      <p class="main-subtitle">Form controls for data entry in the Patina design system.</p>
+    </div>
+
+    <nav class="page-tabs">
+      <a class="page-tab" href="#text-fields">Text Fields</a>
+      <a class="page-tab" href="#select">Select</a>
+      <a class="page-tab" href="#textarea">Textarea</a>
+      <a class="page-tab" href="#text-toolbar">Text Toolbar</a>
+      <a class="page-tab" href="#radio">Radio</a>
+      <a class="page-tab" href="#checkboxes">Checkboxes</a>
+      <a class="page-tab" href="#switches">Switches</a>
+      <a class="page-tab" href="#slider">Slider</a>
+    </nav>
+
+    <!-- TEXT FIELDS -->
+    <div id="text-fields" class="demo-section">
+      <h2 class="demo-title">Text Fields</h2>
+      <p class="demo-desc">Standard single-line text input in six states covering all interaction scenarios.</p>
+
+      <div class="demo-box">
+        <div class="demo-row">
+          <div class="demo-col">
+            <div class="demo-label">Default</div>
+            <div class="field">
+              <label class="field-label">Full Name</label>
+              <input type="text" class="field-input" placeholder="Jane Smith">
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-label">With Value</div>
+            <div class="field">
+              <label class="field-label">Email</label>
+              <input type="email" class="field-input" value="jane@studio.co">
+            </div>
+          </div>
+        </div>
+        <div class="demo-row">
+          <div class="demo-col">
+            <div class="demo-label">With Hint</div>
+            <div class="field">
+              <label class="field-label">Username</label>
+              <input type="text" class="field-input" placeholder="janesmith">
+              <div class="field-hint">Letters, numbers, and underscores only.</div>
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-label">Error State</div>
+            <div class="field field-error">
+              <label class="field-label">Email</label>
+              <input type="email" class="field-input error" value="not-an-email">
+              <div class="field-hint">Enter a valid email address.</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-row">
+          <div class="demo-col">
+            <div class="demo-label">Password</div>
+            <div class="field">
+              <label class="field-label">Password</label>
+              <input type="password" class="field-input" value="hunter2secret">
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-label">Disabled</div>
+            <div class="field">
+              <label class="field-label">Account ID</label>
+              <input type="text" class="field-input" value="acc_9kx2m4p" disabled>
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Short-form data entry (names, emails, URLs).</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Long-form content — use textarea instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Full Name&lt;/label&gt;
+  &lt;input type="text" class="field-input" placeholder="Jane Smith"&gt;
+  &lt;div class="field-hint"&gt;Helper text goes here.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Error state --&gt;
+&lt;div class="field field-error"&gt;
+  &lt;label class="field-label"&gt;Email&lt;/label&gt;
+  &lt;input type="email" class="field-input" value="not-an-email"&gt;
+  &lt;div class="field-hint"&gt;Enter a valid email address.&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SELECT -->
+    <div id="select" class="demo-section">
+      <h2 class="demo-title">Select</h2>
+      <p class="demo-desc">Native select element with optgroup support for categorized options.</p>
+
+      <div class="demo-box">
+        <div class="demo-row">
+          <div class="demo-col">
+            <div class="demo-label">Default</div>
+            <div class="field">
+              <label class="field-label">Country</label>
+              <select class="field-input">
+                <option value="">Select a country...</option>
+                <optgroup label="North America">
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>Mexico</option>
+                </optgroup>
+                <optgroup label="Europe">
+                  <option>Germany</option>
+                  <option>France</option>
+                  <option>United Kingdom</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="demo-label">With Selection</div>
+            <div class="field">
+              <label class="field-label">Role</label>
+              <select class="field-input">
+                <option>Viewer</option>
+                <option selected>Editor</option>
+                <option>Admin</option>
+                <option>Owner</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>3–10 predefined options.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Options exceed 10 — use picklist with search.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Role&lt;/label&gt;
+  &lt;select class="field-input"&gt;
+    &lt;option&gt;Viewer&lt;/option&gt;
+    &lt;option selected&gt;Editor&lt;/option&gt;
+    &lt;option&gt;Admin&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- TEXTAREA -->
+    <div id="textarea" class="demo-section">
+      <h2 class="demo-title">Textarea</h2>
+      <p class="demo-desc">Multi-line text input for longer free-form content.</p>
+
+      <div class="demo-box">
+        <div class="field">
+          <label class="field-label">Description</label>
+          <textarea class="field-input" rows="4" placeholder="Write a brief description..."></textarea>
+          <div class="field-hint">Markdown is supported.</div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Multi-line freeform text: descriptions, notes, comments.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Short single-line values — use a text field.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Description&lt;/label&gt;
+  &lt;textarea class="field-input" rows="4" placeholder="Write a brief description..."&gt;&lt;/textarea&gt;
+  &lt;div class="field-hint"&gt;Markdown is supported.&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- TEXT TOOLBAR -->
+    <div id="text-toolbar" class="demo-section">
+      <h2 class="demo-title">Text Toolbar</h2>
+      <p class="demo-desc">Formatting toolbar for rich text editing. Attach above a textarea to provide inline styling controls.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">Full Toolbar</div>
+        <div class="field" style="margin-bottom:24px;">
+          <label class="field-label">Description</label>
+          <div class="text-toolbar">
+            <select class="text-toolbar-select">
+              <option>Paragraph</option>
+              <option>Heading 1</option>
+              <option>Heading 2</option>
+              <option>Heading 3</option>
+            </select>
+            <div class="text-toolbar-sep"></div>
+            <button class="text-toolbar-btn active" title="Bold" onclick="this.classList.toggle('active')"><strong>B</strong></button>
+            <button class="text-toolbar-btn" title="Italic" onclick="this.classList.toggle('active')"><em>I</em></button>
+            <button class="text-toolbar-btn" title="Underline" onclick="this.classList.toggle('active')"><span style="text-decoration:underline;">U</span></button>
+            <button class="text-toolbar-btn" title="Strikethrough" onclick="this.classList.toggle('active')"><span style="text-decoration:line-through;">S</span></button>
+            <div class="text-toolbar-sep"></div>
+            <button class="text-toolbar-btn" title="Bulleted list" onclick="this.classList.toggle('active')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+            <button class="text-toolbar-btn" title="Numbered list" onclick="this.classList.toggle('active')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="2" y="8" fill="currentColor" stroke="none" font-size="8" font-weight="600" font-family="var(--font-body)">1</text><text x="2" y="14" fill="currentColor" stroke="none" font-size="8" font-weight="600" font-family="var(--font-body)">2</text><text x="2" y="20" fill="currentColor" stroke="none" font-size="8" font-weight="600" font-family="var(--font-body)">3</text></svg>
+            </button>
+            <div class="text-toolbar-sep"></div>
+            <button class="text-toolbar-btn" title="Link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button class="text-toolbar-btn" title="Code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </button>
+            <button class="text-toolbar-btn" title="Quote">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="3" y2="18"/><line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          </div>
+          <textarea class="field-input" rows="5" placeholder="Start typing..." style="border-radius:0 0 var(--radius-sm) var(--radius-sm);">The quick brown fox jumps over the lazy dog. This is a sample paragraph with some bold text to demonstrate the toolbar.</textarea>
+        </div>
+
+        <div class="demo-label">Minimal Toolbar</div>
+        <div class="field">
+          <label class="field-label">Comment</label>
+          <div class="text-toolbar">
+            <button class="text-toolbar-btn" title="Bold" onclick="this.classList.toggle('active')"><strong>B</strong></button>
+            <button class="text-toolbar-btn" title="Italic" onclick="this.classList.toggle('active')"><em>I</em></button>
+            <div class="text-toolbar-sep"></div>
+            <button class="text-toolbar-btn" title="Link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button class="text-toolbar-btn" title="Code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </button>
+          </div>
+          <textarea class="field-input" rows="3" placeholder="Add a comment..." style="border-radius:0 0 var(--radius-sm) var(--radius-sm);"></textarea>
+        </div>
+      </div>
+    <details class="usage-toggle">
+      <summary>When to use / avoid</summary>
+      <div class="usage-block">
+        <div class="usage-do">
+          <div class="usage-label">When to use</div>
+          <ul><li>Rich text fields: descriptions, comments, messages with formatting.</li></ul>
+        </div>
+        <div class="usage-dont">
+          <div class="usage-label">Avoid when</div>
+          <ul><li>Plain text is sufficient — use a standard textarea.</li></ul>
+        </div>
+      </div>
+    </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Description&lt;/label&gt;
+  &lt;div class="text-toolbar"&gt;
+    &lt;select class="text-toolbar-select"&gt;
+      &lt;option&gt;Paragraph&lt;/option&gt;
+      &lt;option&gt;Heading 1&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;div class="text-toolbar-sep"&gt;&lt;/div&gt;
+    &lt;button class="text-toolbar-btn" title="Bold"&gt;&lt;strong&gt;B&lt;/strong&gt;&lt;/button&gt;
+    &lt;button class="text-toolbar-btn" title="Italic"&gt;&lt;em&gt;I&lt;/em&gt;&lt;/button&gt;
+    &lt;button class="text-toolbar-btn" title="Underline"&gt;U&lt;/button&gt;
+    &lt;div class="text-toolbar-sep"&gt;&lt;/div&gt;
+    &lt;button class="text-toolbar-btn" title="Bulleted list"&gt;...&lt;/button&gt;
+    &lt;button class="text-toolbar-btn" title="Link"&gt;...&lt;/button&gt;
+    &lt;button class="text-toolbar-btn" title="Code"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;textarea class="field-input" rows="5"
+    style="border-radius:0 0 var(--radius-sm) var(--radius-sm);"&gt;&lt;/textarea&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- RADIO -->
+    <div id="radio" class="demo-section">
+      <h2 class="demo-title">Radio Buttons</h2>
+      <p class="demo-desc">Single selection from a set of mutually exclusive options.</p>
+
+      <div class="demo-box">
+        <div class="demo-label">Pricing Tier</div>
+        <div class="radio-option selected" onclick="selectPlan(this)">
+          <input type="radio" name="plan" value="essentials" checked style="accent-color:var(--accent);margin-top:2px;">
+          <div class="radio-option-info">
+            <div class="radio-option-name">Essentials</div>
+            <div class="radio-option-price">Free — Up to 3 projects</div>
+          </div>
+        </div>
+        <div class="radio-option" onclick="selectPlan(this)">
+          <input type="radio" name="plan" value="studio" style="accent-color:var(--accent);margin-top:2px;">
+          <div class="radio-option-info">
+            <div class="radio-option-name">Studio</div>
+            <div class="radio-option-price">$12 / mo — Unlimited projects, team collaboration</div>
+          </div>
+        </div>
+        <div class="radio-option" onclick="selectPlan(this)">
+          <input type="radio" name="plan" value="enterprise" style="accent-color:var(--accent);margin-top:2px;">
+          <div class="radio-option-info">
+            <div class="radio-option-name">Enterprise</div>
+            <div class="radio-option-price">Custom — SSO, audit logs, SLA</div>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>2-5 mutually exclusive options that benefit from visible context.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Many options — use a select or picklist instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="radio-option selected" onclick="selectPlan(this)"&gt;
+  &lt;input type="radio" name="plan" value="essentials" checked style="accent-color:var(--accent);"&gt;
+  &lt;div class="radio-option-info"&gt;
+    &lt;div class="radio-option-name"&gt;Essentials&lt;/div&gt;
+    &lt;div class="radio-option-price"&gt;Free — Up to 3 projects&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- CHECKBOXES -->
+    <div id="checkboxes" class="demo-section">
+      <h2 class="demo-title">Checkboxes</h2>
+      <p class="demo-desc">Multi-selection with independent checked, unchecked, and disabled states.</p>
+
+      <div class="demo-box">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.9rem;">
+            <input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px;">
+            Receive product updates
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.9rem;">
+            <input type="checkbox" style="accent-color:var(--accent);width:16px;height:16px;">
+            Subscribe to weekly digest
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:not-allowed;font-size:0.9rem;color:var(--text-dim);">
+            <input type="checkbox" disabled style="width:16px;height:16px;">
+            Required terms (locked)
+          </label>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Multiple independent boolean choices (preferences, permissions).</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Only one option exists — use a switch instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.9rem;"&gt;
+  &lt;input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px;"&gt;
+  Receive product updates
+&lt;/label&gt;
+
+&lt;label style="cursor:not-allowed;color:var(--text-dim);"&gt;
+  &lt;input type="checkbox" disabled style="width:16px;height:16px;"&gt;
+  Required terms (locked)
+&lt;/label&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SWITCHES -->
+    <div id="switches" class="demo-section">
+      <h2 class="demo-title">Switches / Toggles</h2>
+      <p class="demo-desc">Binary on/off controls for settings and preferences.</p>
+
+      <div class="demo-box">
+        <div class="switch-row">
+          <div class="switch-info">
+            <div class="switch-label-text">Dark Mode</div>
+            <div class="switch-sub">Apply dark theme across the interface</div>
+          </div>
+          <div class="toggle-track" onclick="this.classList.toggle('active')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="switch-row">
+          <div class="switch-info">
+            <div class="switch-label-text">Email Digest</div>
+            <div class="switch-sub">Receive a weekly summary of activity</div>
+          </div>
+          <div class="toggle-track active" onclick="this.classList.toggle('active')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="switch-row">
+          <div class="switch-info">
+            <div class="switch-label-text" style="color:var(--text-dim);">Beta Features</div>
+            <div class="switch-sub">Available on Studio plan and above</div>
+          </div>
+          <div class="toggle-track" style="opacity:0.45;pointer-events:none;"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Instant on/off toggles for settings and preferences.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Change requires a form submission — use checkbox instead.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="switch-row"&gt;
+  &lt;div class="switch-info"&gt;
+    &lt;div class="switch-label-text"&gt;Dark Mode&lt;/div&gt;
+    &lt;div class="switch-sub"&gt;Apply dark theme across the interface&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="toggle-track" onclick="this.classList.toggle('active')"&gt;
+    &lt;div class="toggle-thumb"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Active state --&gt;
+&lt;div class="toggle-track active" onclick="this.classList.toggle('active')"&gt;
+  &lt;div class="toggle-thumb"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- SLIDER -->
+    <div id="slider" class="demo-section">
+      <h2 class="demo-title">Slider</h2>
+      <p class="demo-desc">Range input for continuous numerical values with live value display.</p>
+
+      <div class="demo-box">
+        <div class="field" style="margin-bottom:20px;">
+          <label class="field-label">Volume</label>
+          <div class="slider-row">
+            <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="60" oninput="updateSlider(this,'volumeVal','%')">
+            <span class="slider-val" id="volumeVal">60%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Opacity</label>
+          <div class="slider-row">
+            <input type="range" class="slider" id="opacitySlider" min="0" max="100" value="35" oninput="updateSlider(this,'opacityVal','%')">
+            <span class="slider-val" id="opacityVal">35%</span>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Continuous numeric ranges with immediate visual feedback.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Exact numeric input is needed — use a text field.</li></ul>
+          </div>
+        </div>
+      </details>
+    <div class="code-panel">
+      <button class="code-toggle" onclick="toggleCode(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        View code
+      </button>
+      <div class="code-block">
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+        <pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Volume&lt;/label&gt;
+  &lt;div class="slider-row"&gt;
+    &lt;input type="range" class="slider" min="0" max="100" value="60"
+      oninput="updateSlider(this,'val','%')"&gt;
+    &lt;span class="slider-val" id="val"&gt;60%&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </div>
+    </div>
+
+
+  </main>
+</div>
+
+<script src="sidebar.js"></script>
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Slider live value
+  function updateSlider(input, valId, suffix) {
+    document.getElementById(valId).textContent = input.value + suffix;
+    input.style.setProperty('--val', input.value + '%');
+  }
+  // Init slider tracks
+  document.querySelectorAll('.slider').forEach(s => {
+    s.style.setProperty('--val', s.value + '%');
+  });
+
+  // Radio plan cards
+  function selectPlan(el) {
+    document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input[type="radio"]').checked = true;
+  }
+
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

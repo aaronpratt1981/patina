@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+body { background: var(--bg); }
+.page { max-width: 1000px; margin: 0 auto; padding: 64px 24px; position: relative; z-index: 1; }
+.hero { text-align: center; margin-bottom: 56px; }
+.hero .t-display { font-size: 3rem; line-height: 1.1; margin-bottom: 16px; }
+.hero-sub { font-size: 1.1rem; color: var(--text-secondary); font-weight: 300; max-width: 520px; margin: 0 auto 28px; line-height: 1.6; }
+.billing-toggle { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 8px; }
+.billing-label { font-size: 0.88rem; color: var(--text-secondary); }
+.billing-save { font-size: 0.78rem; font-weight: 600; color: var(--success); background: var(--success-bg); padding: 2px 8px; border-radius: var(--radius-full); }
+
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 56px; }
+.plan-card { position: relative; padding: 32px 28px; }
+.plan-card.featured { border-color: var(--accent); background: var(--white); box-shadow: var(--shadow-lg); }
+.plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: var(--accent); color: var(--white); padding: 4px 14px; border-radius: var(--radius-full); white-space: nowrap; }
+.plan-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+.plan-price { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 6px; }
+.plan-currency { font-size: 1.1rem; font-weight: 600; color: var(--text-secondary); margin-top: 8px; }
+.plan-amount { font-family: var(--font-mono); font-size: 3rem; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
+.plan-period { font-size: 0.82rem; color: var(--text-muted); align-self: flex-end; margin-bottom: 6px; }
+.plan-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+.plan-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px; }
+.plan-features li { display: flex; align-items: center; gap: 10px; font-size: 0.87rem; color: var(--text-secondary); }
+.plan-features li svg { color: var(--success); flex-shrink: 0; }
+.plan-features li.disabled { color: var(--text-dim); }
+.plan-features li.disabled svg { color: var(--text-dim); }
+
+.comparison-section { margin-bottom: 56px; }
+.comparison-section h2 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; text-align: center; margin-bottom: 28px; }
+.comparison-table thead th { text-align: center; }
+.comparison-table thead th:first-child { text-align: left; }
+.comparison-table td { text-align: center; }
+.comparison-table td:first-child { text-align: left; font-weight: 500; color: var(--text); }
+.check { color: var(--success); font-size: 1rem; }
+.dash { color: var(--text-dim); }
+
+.faq-section { margin-bottom: 56px; }
+.faq-section h2 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; text-align: center; margin-bottom: 28px; }
+
+.final-cta { text-align: center; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: var(--radius-xl); padding: 56px 40px; }
+.final-cta h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 12px; }
+.final-cta p { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 28px; }
+.cta-buttons { display: flex; gap: 12px; justify-content: center; }
+
+@media (max-width: 760px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+  .hero .t-display { font-size: 2rem; }
+  .final-cta { padding: 40px 20px; }
+  .cta-buttons { flex-wrap: wrap; }
+  .page { padding: 40px 16px; }
+}
+@media (max-width: 480px) {
+  .hero .t-display { font-size: 1.7rem; }
+  .billing-toggle { flex-wrap: wrap; justify-content: center; }
+  .final-cta { padding: 32px 16px; }
+  .final-cta h2 { font-size: 1.5rem; }
+}
+</style>
+<script>document.fonts.ready.then(()=>document.documentElement.classList.add('fonts-ready'));</script>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="page">
+  <!-- Components: plan-card, pricing-grid, comparison-table, faq-section, accordion, billing-toggle, final-cta -->
+  <!-- Hero -->
+  <div class="hero">
+    <span class="badge badge-accent" style="margin-bottom:16px;display:inline-flex;">New — Annual plans save 30%</span>
+    <h1 class="t-display">Simple, honest pricing</h1>
+    <p class="hero-sub">Start free, scale when you need to. No hidden fees, no surprises.</p>
+    <div class="billing-toggle">
+      <span class="billing-label">Monthly</span>
+      <div class="toggle-track active" id="billing-toggle" onclick="toggleBilling(this)">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="billing-label">Annual <span class="billing-save">Save 30%</span></span>
+    </div>
+  </div>
+
+  <!-- Pricing cards -->
+  <div class="pricing-grid">
+    <!-- Starter -->
+    <div class="card plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">
+        <span class="plan-currency">$</span>
+        <span class="plan-amount" data-monthly="0" data-annual="0">0</span>
+        <span class="plan-period">/ mo</span>
+      </div>
+      <p class="plan-desc">Everything you need to get started. Free forever.</p>
+      <ul class="plan-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Up to 3 projects</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> 5 GB storage</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Basic analytics</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Community support</li>
+        <li class="disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Custom domains</li>
+        <li class="disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> API access</li>
+      </ul>
+      <button class="btn btn-secondary w-full">Get started free</button>
+    </div>
+
+    <!-- Pro (Featured) -->
+    <div class="card plan-card featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">
+        <span class="plan-currency">$</span>
+        <span class="plan-amount" data-monthly="29" data-annual="20">20</span>
+        <span class="plan-period">/ mo</span>
+      </div>
+      <p class="plan-desc">For professionals and growing teams who need more power.</p>
+      <ul class="plan-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Unlimited projects</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> 100 GB storage</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Advanced analytics</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Priority support</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Custom domains</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> API access</li>
+      </ul>
+      <button class="btn btn-primary w-full btn-lg">Start Pro trial</button>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="card plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">
+        <span class="plan-currency">$</span>
+        <span class="plan-amount" data-monthly="99" data-annual="69">69</span>
+        <span class="plan-period">/ mo</span>
+      </div>
+      <p class="plan-desc">Advanced security, compliance, and dedicated support for teams.</p>
+      <ul class="plan-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Everything in Pro</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> 1 TB storage</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> SSO / SAML</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Audit logs</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Dedicated CSM</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> SLA guarantee</li>
+      </ul>
+      <button class="btn btn-secondary w-full">Contact sales</button>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="comparison-section">
+    <h2>Compare all features</h2>
+    <div class="card card--flat">
+      <div class="table-wrapper">
+        <table class="data-table comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Starter</th>
+              <th>Pro</th>
+              <th>Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Projects</td><td>3</td><td>Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Storage</td><td>5 GB</td><td>100 GB</td><td>1 TB</td></tr>
+            <tr><td>Team members</td><td>1</td><td>25</td><td>Unlimited</td></tr>
+            <tr><td>Analytics</td><td>Basic</td><td>Advanced</td><td>Advanced + Custom</td></tr>
+            <tr><td>Custom domains</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>API access</td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>SSO / SAML</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>Audit logs</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>Support</td><td>Community</td><td>Priority</td><td>Dedicated CSM</td></tr>
+            <tr><td>SLA</td><td><span class="dash">—</span></td><td>99.9%</td><td>99.99%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="accordion">
+      <div class="accordion-item open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          Can I switch plans anytime?
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body">Yes, you can upgrade or downgrade at any time. Upgrades take effect immediately and are prorated. Downgrades take effect at the end of your billing cycle.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          Is there a free trial for Pro?
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body">Yes, all Pro plans come with a 14-day free trial. No credit card required to start. You'll only be billed if you choose to continue after the trial period.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          What payment methods do you accept?
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body">We accept all major credit cards (Visa, Mastercard, Amex), PayPal, and bank transfers for Enterprise plans. All payments are processed securely via Stripe.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          Do you offer discounts for nonprofits or education?
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body">Yes! We offer 50% off for verified nonprofits and educational institutions. Contact our support team with your verification documents to apply.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          What happens to my data if I cancel?
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body">Your data remains accessible for 30 days after cancellation. We provide a full export tool so you can download everything before your account closes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final CTA -->
+  <div class="final-cta">
+    <h2>Ready to get started?</h2>
+    <p>Join over 12,000 teams already using Patina. No credit card required.</p>
+    <div class="cta-buttons">
+      <button class="btn btn-primary btn-lg">Start for free</button>
+      <button class="btn btn-secondary btn-lg">Talk to sales</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  item.classList.toggle('open');
+}
+function toggleBilling(toggle) {
+  toggle.classList.toggle('active');
+  const isAnnual = toggle.classList.contains('active');
+  document.querySelectorAll('.plan-amount').forEach(el => {
+    el.textContent = isAnnual ? el.dataset.annual : el.dataset.monthly;
+  });
+}
+</script>
+<script src="inspector.js"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — My Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-system.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:780px;">
+    <!-- Components: page-alert, card, avatar, form-group, form-row, form-input, form-toggle, pref-row -->
+
+    <div class="page-alert alert-accent" id="alertSaved" style="display:none;">
+      <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2m0 14v2m-7-9H3m18 0h-2m-1.5-6.5L16 7m-8 10l-1.5 1.5M17.5 17.5L16 16M6.5 6.5L8 8"/><circle cx="12" cy="12" r="3"/></svg></span>
+      <div class="alert-body"><strong>Profile updated</strong><span>Your changes have been saved successfully.</span></div>
+      <button class="alert-dismiss" onclick="this.parentElement.style.display='none'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+
+    <div class="breadcrumbs mb-16">
+      <a class="breadcrumb-item" href="home.html">Home</a>
+      <span class="breadcrumb-item">Profile</span>
+    </div>
+
+    <div class="main-header">
+      <h1 class="main-title">Profile</h1>
+      <p class="main-subtitle">Manage your personal information and preferences.</p>
+    </div>
+
+    <!-- Avatar Section -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Photo</div></div>
+      <div style="display:flex;align-items:center;gap:24px;">
+        <div class="avatar avatar-xl avatar-accent" style="width:80px;height:80px;font-size:1.6rem;">JD</div>
+        <div>
+          <div style="display:flex;gap:10px;margin-bottom:8px;">
+            <button class="btn btn-secondary btn-sm">Upload photo</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--text-muted);">Remove</button>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-dim);">JPG, PNG, or GIF. Max 2 MB. Recommended 256 × 256 px.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Personal Information</div></div>
+      <form onsubmit="event.preventDefault(); document.getElementById('alertSaved').style.display='flex'; window.scrollTo({top:0,behavior:'smooth'});">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-input" value="Jane" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-input" value="Doe" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input type="email" class="form-input" value="jane@company.com" />
+          <div class="form-hint">This is used for notifications and sign-in.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="form-input-prefix">
+            <span class="prefix-symbol">@</span>
+            <input type="text" class="form-input" value="janedoe42" />
+          </div>
+          <div class="form-hint">Your public handle. Only letters, numbers, and underscores.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bio</label>
+          <textarea class="form-input" rows="3" placeholder="Tell us a little about yourself...">Product designer with a love for clean interfaces and warm color palettes. Based in Brooklyn, NY.</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Job title</label>
+            <input type="text" class="form-input" value="Senior Product Designer" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input type="text" class="form-input" value="Acme Corp" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Website</label>
+          <input type="url" class="form-input" value="https://janedoe.design" placeholder="https://..." />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Preferences -->
+    <div class="card mb-24">
+      <div class="card-header"><div class="card-title">Preferences</div></div>
+
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-name">Timezone</div>
+          <div class="pref-desc">Used for scheduling and notifications</div>
+        </div>
+        <select class="form-input" style="width:auto;min-width:220px;">
+          <option>(UTC-5) Eastern Time</option>
+          <option>(UTC-6) Central Time</option>
+          <option>(UTC-7) Mountain Time</option>
+          <option>(UTC-8) Pacific Time</option>
+          <option>(UTC+0) London</option>
+        </select>
+      </div>
+
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-name">Language</div>
+          <div class="pref-desc">Display language for the interface</div>
+        </div>
+        <select class="form-input" style="width:auto;min-width:220px;">
+          <option>English (US)</option>
+          <option>English (UK)</option>
+          <option>Español</option>
+          <option>Français</option>
+          <option>Deutsch</option>
+        </select>
+      </div>
+
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-name">Email notifications</div>
+          <div class="pref-desc">Receive email updates about activity</div>
+        </div>
+        <label class="form-toggle">
+          <input type="checkbox" checked>
+          <div class="toggle-rail"><div class="toggle-knob"></div></div>
+        </label>
+      </div>
+
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-name">Marketing emails</div>
+          <div class="pref-desc">Tips, product updates, and announcements</div>
+        </div>
+        <label class="form-toggle">
+          <input type="checkbox">
+          <div class="toggle-rail"><div class="toggle-knob"></div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card" style="border-color:var(--danger-bg);">
+      <div class="card-header"><div class="card-title" style="color:var(--danger);">Danger Zone</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
+        <div>
+          <div style="font-size:0.88rem;font-weight:600;">Delete account</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.4;">Permanently remove your account and all associated data. This cannot be undone.</div>
+        </div>
+        <button class="btn btn-sm btn-danger" style="flex-shrink:0;">Delete account</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="admin-sidebar.js"></script>
+<script src="../inspector.js"></script>
+</body>
+</html>

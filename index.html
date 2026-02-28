@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patina — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  /* Hero */
+  .home-hero { margin-bottom: 72px; }
+  .home-title { font-family: var(--font-display); font-size: 2.6rem; font-weight: 300; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; color: var(--text); }
+  .home-title em { font-weight: 400; font-style: italic; color: var(--accent); }
+  .home-lead { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); max-width: 640px; margin-bottom: 16px; }
+  .home-lead strong { font-weight: 600; color: var(--text); }
+
+  /* Section headings */
+  .home-section { margin-bottom: 72px; }
+  .home-section h2 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .home-section > p { font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 20px; max-width: 640px; }
+
+  /* Palette strips */
+  .home-palettes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0; }
+  .home-palette-row { display: flex; align-items: center; gap: 0; }
+  .home-palette-label { width: 110px; flex-shrink: 0; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+  .home-palette-strip { flex: 1; display: flex; gap: 3px; height: 44px; border-radius: var(--radius-sm); overflow: hidden; }
+  .home-palette-swatch { flex: 1; transition: flex 0.3s ease; position: relative; }
+  .home-palette-swatch:hover { flex: 3; }
+  .home-palette-swatch:hover::after { content: attr(data-name); position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-family: var(--font-mono); color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); white-space: nowrap; pointer-events: none; opacity: 1; }
+  .home-palette-swatch::after { opacity: 0; transition: opacity 0.2s; }
+
+  /* Tenets */
+  .home-tenets { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .home-tenet { padding: 24px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg); }
+  .home-tenet h3 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .home-tenet p { font-size: 0.84rem; line-height: 1.6; color: var(--text-secondary); margin: 0; }
+  .home-tenet .tenet-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; flex-shrink: 0; }
+
+  /* Typography showcase */
+  .home-type-row { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 0; }
+  .home-type-sample { flex: 1; min-width: 200px; }
+  .home-type-sample .label { font-size: 0.68rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 8px; }
+  .home-type-display { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 4px; }
+  .home-type-body { font-family: var(--font-body); font-size: 0.92rem; line-height: 1.65; color: var(--text-secondary); }
+  .home-type-mono { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6; color: var(--text-muted); }
+
+  /* Explore nav */
+  .home-nav-group { margin-bottom: 24px; }
+  .home-nav-group h3 { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+  .home-nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .home-nav-card { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); text-decoration: none; color: var(--text); font-size: 0.84rem; font-weight: 500; transition: box-shadow 0.15s, border-color 0.15s; }
+  .home-nav-card:hover { box-shadow: var(--shadow-md); border-color: var(--accent-border); }
+  .home-nav-card svg { color: var(--text-muted); flex-shrink: 0; }
+
+  /* Stats row */
+  .home-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 0; }
+  .home-stat { text-align: center; padding: 20px 12px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); }
+  .home-stat-value { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; letter-spacing: -0.02em; color: var(--text); }
+  .home-stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+  /* Colophon */
+  .home-colophon { font-size: 0.82rem; color: var(--text-dim); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 32px; max-width: 540px; font-style: italic; }
+
+  @media (max-width: 860px) {
+    .home-title { font-size: 2rem; }
+    .home-palette-label { width: 80px; font-size: 0.65rem; }
+    .home-type-row { flex-direction: column; gap: 24px; }
+    .home-stats { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .home-title { font-size: 1.6rem; }
+    .home-nav-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <!-- Hero -->
+    <div class="home-hero">
+      <h1 class="home-title">Not another<br>design system.<br>A <em>considered</em> one.</h1>
+      <p class="home-lead">
+        Patina is a design language for interfaces that deserve to age gracefully.
+        Built on the conviction that <strong>warmth is not the enemy of professionalism</strong>,
+        it trades the sterile blues and sharp corners of enterprise monotony for
+        earthen tones, generous typography, and surfaces that feel like they were
+        made by someone who has actually used a library card.
+      </p>
+      <p class="home-lead">
+        Every token, every radius, every shadow has been chosen with the quiet
+        confidence of a typeface that doesn't need to shout. If your product
+        aspires to be more than a spreadsheet with rounded corners, you've
+        come to the right place.
+      </p>
+    </div>
+
+    <!-- Color Palettes -->
+    <div class="home-section">
+      <h2>Color</h2>
+      <p>
+        Four chromatic families, each with a job. Rust is the primary voice—assertive
+        without being aggressive. Lichen provides organic calm. Chicory brings clarity
+        when data needs to speak. And Amethyst marks the boundary where human authorship
+        ends and machine intelligence begins.
+      </p>
+      <div class="home-palettes">
+        <div class="home-palette-row">
+          <span class="home-palette-label">Rust</span>
+          <div class="home-palette-strip">
+            <div class="home-palette-swatch" style="background:var(--accent-bg);" data-name="accent-bg"></div>
+            <div class="home-palette-swatch" style="background:var(--accent-border);" data-name="accent-border"></div>
+            <div class="home-palette-swatch" style="background:var(--accent-light);" data-name="accent-light"></div>
+            <div class="home-palette-swatch" style="background:var(--accent);" data-name="accent"></div>
+            <div class="home-palette-swatch" style="background:var(--accent-dark);" data-name="accent-dark"></div>
+          </div>
+        </div>
+        <div class="home-palette-row">
+          <span class="home-palette-label">Lichen</span>
+          <div class="home-palette-strip">
+            <div class="home-palette-swatch" style="background:var(--accent2-bg);" data-name="accent2-bg"></div>
+            <div class="home-palette-swatch" style="background:var(--accent2-border);" data-name="accent2-border"></div>
+            <div class="home-palette-swatch" style="background:var(--accent2-light);" data-name="accent2-light"></div>
+            <div class="home-palette-swatch" style="background:var(--accent2);" data-name="accent2"></div>
+            <div class="home-palette-swatch" style="background:var(--accent2-dark);" data-name="accent2-dark"></div>
+          </div>
+        </div>
+        <div class="home-palette-row">
+          <span class="home-palette-label">Chicory</span>
+          <div class="home-palette-strip">
+            <div class="home-palette-swatch" style="background:var(--accent3-bg);" data-name="accent3-bg"></div>
+            <div class="home-palette-swatch" style="background:var(--accent3-border);" data-name="accent3-border"></div>
+            <div class="home-palette-swatch" style="background:var(--accent3-light);" data-name="accent3-light"></div>
+            <div class="home-palette-swatch" style="background:var(--accent3);" data-name="accent3"></div>
+            <div class="home-palette-swatch" style="background:var(--accent3-dark);" data-name="accent3-dark"></div>
+          </div>
+        </div>
+        <div class="home-palette-row">
+          <span class="home-palette-label">Amethyst</span>
+          <div class="home-palette-strip">
+            <div class="home-palette-swatch" style="background:var(--ai-bg);" data-name="ai-bg"></div>
+            <div class="home-palette-swatch" style="background:var(--ai-border);" data-name="ai-border"></div>
+            <div class="home-palette-swatch" style="background:var(--ai-light);" data-name="ai-light"></div>
+            <div class="home-palette-swatch" style="background:var(--ai);" data-name="ai"></div>
+            <div class="home-palette-swatch" style="background:var(--ai-dark);" data-name="ai-dark"></div>
+          </div>
+        </div>
+        <div class="home-palette-row">
+          <span class="home-palette-label">Neutrals</span>
+          <div class="home-palette-strip">
+            <div class="home-palette-swatch" style="background:var(--bg);" data-name="bg"></div>
+            <div class="home-palette-swatch" style="background:var(--bg-warm);" data-name="bg-warm"></div>
+            <div class="home-palette-swatch" style="background:var(--border);" data-name="border"></div>
+            <div class="home-palette-swatch" style="background:var(--text-dim);" data-name="text-dim"></div>
+            <div class="home-palette-swatch" style="background:var(--text-secondary);" data-name="text-secondary"></div>
+            <div class="home-palette-swatch" style="background:var(--text);" data-name="text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="home-section">
+      <h2>Typography</h2>
+      <p>
+        Three type families, each with a clear mandate. Display type has presence.
+        Body type has legibility. Monospace type has precision. There is no fourth family
+        because three is already one more than most systems use well.
+      </p>
+      <div class="home-type-row">
+        <div class="home-type-sample">
+          <div class="label">Display — Noto Serif</div>
+          <div class="home-type-display">The quiet part,<br>said clearly</div>
+        </div>
+        <div class="home-type-sample">
+          <div class="label">Body — Inter</div>
+          <div class="home-type-body">Interfaces are read more than they are looked at. Body text should reward the reading—generous line-height, four tiers of contrast, weights that suggest rather than shout.</div>
+        </div>
+        <div class="home-type-sample">
+          <div class="label">Mono — IBM Plex Mono</div>
+          <div class="home-type-mono">font-size: 0.88rem;<br>letter-spacing: -0.01em;<br>line-height: 1.6;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Philosophy -->
+    <div class="home-section">
+      <h2>Philosophy</h2>
+      <p>
+        Most design systems begin with a color picker and end with a Jira ticket.
+        Patina begins with a question: what if software looked like it was designed
+        by people who read books printed on paper? The answer, it turns out, is
+        a system built on restraint, warmth, and an unfashionable respect for the
+        written word.
+      </p>
+      <p class="home-lead" style="font-size:0.92rem;">
+        We use serif headings not because we're nostalgic, but because display type
+        should have a voice. We chose a rust accent not because it trends on Dribbble,
+        but because terracotta has been beautiful for four thousand years and will
+        remain so long after your current primary blue has been deprecated.
+      </p>
+    </div>
+
+    <!-- Tenets -->
+    <div class="home-section">
+      <h2>Principles</h2>
+      <div class="home-tenets">
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--accent-bg);color:var(--accent);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </div>
+          <h3>Warm over clinical</h3>
+          <p>Backgrounds that breathe. Borders that recede. Color that feels like it came from the earth, not a hex generator.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--accent2-bg);color:var(--accent2);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          </div>
+          <h3>Typographic hierarchy</h3>
+          <p>Four tiers of text color. Three font families, each with a purpose. Display type in Noto Serif, because headings should have presence.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--accent3-bg);color:var(--accent3);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z"/></svg>
+          </div>
+          <h3>Quiet surfaces</h3>
+          <p>Subtle grain texture. Organic background shapes. Shadows that suggest depth without demanding attention.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--ai-bg);color:var(--ai);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <h3>Machine-aware</h3>
+          <p>AI-generated content is visually distinct. The amethyst palette signals where human authorship ends and machine intelligence begins.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--bg-warm);color:var(--text-muted);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          </div>
+          <h3>Restraint as a feature</h3>
+          <p>Seven spacing values. Six border radii. Five shadow levels. Everything you need and nothing you don't.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--accent-bg);color:var(--accent-dark);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>Considered motion</h3>
+          <p>Spring easings on toggles. Staggered card entrances. Animation that serves comprehension, not spectacle.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--success-bg);color:var(--success);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Accessible by default</h3>
+          <p>Every text token meets WCAG contrast ratios. Reduced-motion preferences are honored. Focus states glow, not just outline.</p>
+        </div>
+        <div class="home-tenet card">
+          <div class="tenet-icon" style="background:var(--accent2-bg);color:var(--accent2-dark);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Token-driven</h3>
+          <p>No magic numbers. Every spacing, radius, shadow, and color traces back to a named token. Change one value, update everywhere.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- By the numbers -->
+    <div class="home-section">
+      <h2>By the numbers</h2>
+      <div class="home-stats">
+        <div class="home-stat">
+          <div class="home-stat-value">60+</div>
+          <div class="home-stat-label">Components</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-value">21</div>
+          <div class="home-stat-label">Layout patterns</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-value">4</div>
+          <div class="home-stat-label">Key colors</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-value">3</div>
+          <div class="home-stat-label">Type families</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-value">8</div>
+          <div class="home-stat-label">Chart colors</div>
+        </div>
+        <div class="home-stat">
+          <div class="home-stat-value">0</div>
+          <div class="home-stat-label">Hex values in components</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explore -->
+    <div class="home-section">
+      <h2>Explore</h2>
+
+      <div class="home-nav-group">
+        <h3>Foundations & Components</h3>
+        <div class="home-nav-grid">
+          <a class="home-nav-card" href="foundations.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+            Foundations
+          </a>
+          <a class="home-nav-card" href="actions.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Actions
+          </a>
+          <a class="home-nav-card" href="inputs.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Inputs
+          </a>
+          <a class="home-nav-card" href="pickers.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Pickers
+          </a>
+          <a class="home-nav-card" href="selection.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            Selection
+          </a>
+          <a class="home-nav-card" href="feedback.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Feedback
+          </a>
+          <a class="home-nav-card" href="layout.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            Layout
+          </a>
+          <a class="home-nav-card" href="nav-components.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            Navigation
+          </a>
+          <a class="home-nav-card" href="data-display.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            Data Display
+          </a>
+          <a class="home-nav-card" href="charts.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Charts
+          </a>
+          <a class="home-nav-card" href="grids.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Grids
+          </a>
+          <a class="home-nav-card" href="drag-drop.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            Drag &amp; Drop
+          </a>
+          <a class="home-nav-card" href="image-gallery.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Image Gallery
+          </a>
+          <a class="home-nav-card" href="ai-components.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+            AI Components
+          </a>
+          <a class="home-nav-card" href="patterns.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            Patterns
+          </a>
+        </div>
+      </div>
+
+      <div class="home-nav-group">
+        <h3>Reference Pages</h3>
+        <div class="home-nav-grid">
+          <a class="home-nav-card" href="dashboard.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+          </a>
+          <a class="home-nav-card" href="analytics.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Analytics
+          </a>
+          <a class="home-nav-card" href="kanban.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+            Board
+          </a>
+          <a class="home-nav-card" href="calendar.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendar
+          </a>
+          <a class="home-nav-card" href="table-list.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Table View
+          </a>
+          <a class="home-nav-card" href="detail-page.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Detail
+          </a>
+          <a class="home-nav-card" href="article.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Article
+          </a>
+          <a class="home-nav-card" href="file-manager.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+            File Manager
+          </a>
+          <a class="home-nav-card" href="inbox.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+            Inbox
+          </a>
+          <a class="home-nav-card" href="chat.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Chat
+          </a>
+          <a class="home-nav-card" href="notifications.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            Notifications
+          </a>
+          <a class="home-nav-card" href="profile.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+          </a>
+          <a class="home-nav-card" href="settings.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            Settings
+          </a>
+          <a class="home-nav-card" href="user-directory.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            User Directory
+          </a>
+          <a class="home-nav-card" href="ecommerce-category.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l1-4h16l1 4"/><path d="M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9"/><path d="M9 21V13h6v8"/><path d="M3 9h18"/></svg>
+            Category
+          </a>
+          <a class="home-nav-card" href="ecommerce-product.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16.5 9.4l-9-5.19"/><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Product
+          </a>
+          <a class="home-nav-card" href="checkout.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            Checkout
+          </a>
+          <a class="home-nav-card" href="login.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Login
+          </a>
+          <a class="home-nav-card" href="landing.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            Landing
+          </a>
+          <a class="home-nav-card" href="pricing.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Pricing
+          </a>
+          <a class="home-nav-card" href="error-pages.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Error Pages
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <p class="home-colophon">
+      Set in Noto Serif, Inter, and IBM Plex Mono. Colored with
+      rust, lichen, chicory, and amethyst. Designed for people who believe
+      software can have a point of view.
+    </p>
+
+  </main>
+</div>
+<script src="sidebar.js"></script>
+</body>
+</html>

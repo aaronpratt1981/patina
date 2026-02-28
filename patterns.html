@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patterns — Patina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  .demo-section { margin-bottom: 56px; }
+  .demo-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .demo-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+  .demo-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .demo-row:last-child { margin-bottom: 0; }
+  .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" style="max-width:960px;">
+
+    <div class="top-bar">
+      <div class="top-bar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+      <div class="top-bar-title">Patterns</div>
+    </div>
+    <!-- Components: auth-layout, auth-left, auth-right, auth-brand, auth-form, auth-tabs, auth-panel, testimonial, testimonial-text, testimonial-author, testimonial-name, testimonial-role, hero, hero-eyebrow, hero-title, hero-desc, hero-actions, error-section, error-card, error-code, features-grid, feature-card, feature-icon, pricing-grid, plan-card, plan-price, plan-features, stats-section, stat-number, countdown, countdown-unit, countdown-num, countdown-label, toc, toc-link, section-rule, demo-section, demo-box, demo-label, code-panel, usage-toggle, usage-block, usage-do, usage-dont, usage-label -->
+
+    <div class="main-header">
+      <h1 class="main-title">Patterns</h1>
+      <p class="main-subtitle">Page-level patterns composed of multiple components — auth flows, heroes, pricing, errors, and marketing sections.</p>
+    </div>
+
+    <!-- TOC -->
+    <nav class="page-tabs">
+      <a class="page-tab" href="#auth-layout">Auth Layout</a>
+      <a class="page-tab" href="#hero-section">Hero Section</a>
+      <a class="page-tab" href="#error-section">Error Section</a>
+      <a class="page-tab" href="#testimonial">Testimonial</a>
+      <a class="page-tab" href="#feature-card">Feature Card</a>
+      <a class="page-tab" href="#plan-card">Plan Card</a>
+      <a class="page-tab" href="#stats-counter">Stats Counter</a>
+      <a class="page-tab" href="#countdown">Countdown</a>
+      <a class="page-tab" href="#usage-block">Usage Block</a>
+      <a class="page-tab" href="#expand-collapse">Expand / Collapse</a>
+    </nav>
+
+    <!-- Auth Layout -->
+    <section class="demo-section" id="auth-layout">
+      <h2 class="demo-title">Auth Layout</h2>
+      <p class="demo-desc">Split-screen authentication pattern with brand panel and form panel. Used for login and registration flows.</p>
+
+      <div class="demo-box">
+        <div style="display:flex;border-radius:var(--radius-lg);overflow:hidden;border:1.5px solid var(--border);min-height:200px;">
+          <div style="flex:1;background:var(--accent-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:8px;">
+            <div style="font-weight:600;font-size:0.9rem;color:var(--accent-dark);">Brand Panel</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">.auth-left</div>
+          </div>
+          <div style="flex:1;background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:8px;">
+            <div style="font-weight:600;font-size:0.9rem;">Form Panel</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">.auth-right → .auth-form</div>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Login, signup, and password reset flows requiring brand presence.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Simple inline auth modals or embedded forms.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="auth-layout"&gt;
+  &lt;div class="auth-left"&gt;
+    &lt;div class="auth-brand"&gt;...&lt;/div&gt;
+    &lt;div class="testimonial"&gt;...&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="auth-right"&gt;
+    &lt;div class="auth-form"&gt;
+      &lt;div class="auth-tabs"&gt;...&lt;/div&gt;
+      &lt;div class="auth-panel"&gt;...&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Hero Section -->
+    <section class="demo-section" id="hero-section">
+      <h2 class="demo-title">Hero Section</h2>
+      <p class="demo-desc">Full-width marketing hero with eyebrow text, headline, description, and CTA buttons.</p>
+
+      <div class="demo-box">
+        <div style="text-align:center;padding:32px 20px;">
+          <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">Eyebrow Text</div>
+          <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:400;letter-spacing:-0.02em;margin-bottom:8px;">Hero Headline</div>
+          <div style="color:var(--text-secondary);font-size:0.9rem;max-width:400px;margin:0 auto 16px;">Supporting description text that explains the value proposition.</div>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn btn-primary">Get Started</button>
+            <button class="btn btn-secondary">Learn More</button>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Landing and marketing pages that need a strong visual entry point.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>App interior pages — use Top App Bar instead.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="hero"&gt;
+  &lt;div class="hero-eyebrow"&gt;Tagline&lt;/div&gt;
+  &lt;h1 class="hero-title"&gt;Headline&lt;/h1&gt;
+  &lt;p class="hero-desc"&gt;Description&lt;/p&gt;
+  &lt;div class="hero-actions"&gt;
+    &lt;button class="btn btn-primary"&gt;CTA&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Error Section -->
+    <section class="demo-section" id="error-section">
+      <h2 class="demo-title">Error Section</h2>
+      <p class="demo-desc">Full-page error display for 404, 500, and maintenance states. Centered card with error code, message, and recovery actions.</p>
+
+      <div class="demo-box">
+        <div style="text-align:center;padding:32px 20px;">
+          <div style="font-family:var(--font-display);font-size:3rem;font-weight:300;color:var(--accent);margin-bottom:4px;">404</div>
+          <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:400;margin-bottom:8px;">Page not found</div>
+          <div style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:20px;">The page you're looking for doesn't exist or has been moved.</div>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn btn-primary btn-sm">Go Home</button>
+            <button class="btn btn-secondary btn-sm">Go Back</button>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Dedicated error pages (404, 500, maintenance).</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Inline errors within a page — use Alert or Empty State instead.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="error-section"&gt;
+  &lt;div class="error-card"&gt;
+    &lt;div class="error-code"&gt;404&lt;/div&gt;
+    &lt;h1&gt;Page not found&lt;/h1&gt;
+    &lt;p&gt;Description&lt;/p&gt;
+    &lt;div&gt;
+      &lt;button class="btn btn-primary"&gt;Go Home&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Testimonial -->
+    <section class="demo-section" id="testimonial">
+      <h2 class="demo-title">Testimonial</h2>
+      <p class="demo-desc">Quote block with attribution. Includes author avatar, name, and role.</p>
+
+      <div class="demo-box">
+        <div style="max-width:400px;">
+          <div style="font-family:var(--font-display);font-style:italic;font-size:0.95rem;line-height:1.6;margin-bottom:16px;color:var(--text);">"Patina transformed how our design team works. We shipped our rebrand in half the time."</div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar avatar-md avatar-accent">SC</div>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;">Sarah Connor</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">Head of Design, Acme Corp</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Social proof on marketing, auth, and landing pages.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Internal dashboards — use data metrics instead.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="testimonial"&gt;
+  &lt;div class="testimonial-text"&gt;"Quote..."&lt;/div&gt;
+  &lt;div class="testimonial-author"&gt;
+    &lt;div class="avatar avatar-md"&gt;SC&lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class="testimonial-name"&gt;Name&lt;/div&gt;
+      &lt;div class="testimonial-role"&gt;Title&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Feature Card -->
+    <section class="demo-section" id="feature-card">
+      <h2 class="demo-title">Feature Card</h2>
+      <p class="demo-desc">Icon-led card for showcasing features or capabilities. Used in grid layouts on marketing pages.</p>
+
+      <div class="demo-box">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div class="icon-box" style="margin:0 auto 12px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div style="font-weight:600;font-size:0.9rem;margin-bottom:4px;">Feature One</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Brief description of the feature and its value.</div>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div class="icon-box" style="margin:0 auto 12px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            </div>
+            <div style="font-weight:600;font-size:0.9rem;margin-bottom:4px;">Feature Two</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Brief description of the feature and its value.</div>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div class="icon-box" style="margin:0 auto 12px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div style="font-weight:600;font-size:0.9rem;margin-bottom:4px;">Feature Three</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Brief description of the feature and its value.</div>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Feature grids on landing and product pages.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Detailed content — use standard cards with headers.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="features-grid"&gt;
+  &lt;div class="feature-card"&gt;
+    &lt;div class="feature-icon"&gt;...&lt;/div&gt;
+    &lt;h3&gt;Title&lt;/h3&gt;
+    &lt;p&gt;Description&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Plan Card -->
+    <section class="demo-section" id="plan-card">
+      <h2 class="demo-title">Plan Card</h2>
+      <p class="demo-desc">Pricing tier card showing plan name, price, feature list, and CTA. Used in pricing grids.</p>
+
+      <div class="demo-box">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:500px;">
+          <div class="card" style="padding:24px;">
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Starter</div>
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:4px;">$12<span style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-body);">/mo</span></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:16px;">For individuals</div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:0.82rem;">
+              <li style="padding:4px 0;">&#10003; 5 projects</li>
+              <li style="padding:4px 0;">&#10003; 1 GB storage</li>
+              <li style="padding:4px 0;">&#10003; Email support</li>
+            </ul>
+            <button class="btn btn-secondary" style="width:100%;">Get Started</button>
+          </div>
+          <div class="card card-accent" style="padding:24px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-weight:600;font-size:0.88rem;">Pro</span><span class="badge badge-highlight">Popular</span></div>
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:4px;">$29<span style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-body);">/mo</span></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:16px;">For teams</div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:0.82rem;">
+              <li style="padding:4px 0;">&#10003; Unlimited projects</li>
+              <li style="padding:4px 0;">&#10003; 50 GB storage</li>
+              <li style="padding:4px 0;">&#10003; Priority support</li>
+            </ul>
+            <button class="btn btn-primary" style="width:100%;">Get Started</button>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Pricing pages with tiered subscription plans.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Single plan or enterprise-only pricing — use a simpler layout.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="pricing-grid"&gt;
+  &lt;div class="plan-card"&gt;
+    &lt;h3&gt;Plan Name&lt;/h3&gt;
+    &lt;div class="plan-price"&gt;$12&lt;span&gt;/mo&lt;/span&gt;&lt;/div&gt;
+    &lt;ul class="plan-features"&gt;
+      &lt;li&gt;Feature&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;button class="btn btn-primary"&gt;CTA&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Stats Counter -->
+    <section class="demo-section" id="stats-counter">
+      <h2 class="demo-title">Stats Counter</h2>
+      <p class="demo-desc">Large numeric display for key metrics. Used in marketing and dashboard hero sections.</p>
+
+      <div class="demo-box">
+        <div style="display:flex;gap:32px;justify-content:center;text-align:center;">
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:400;color:var(--accent);">10k+</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Users</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:400;color:var(--accent);">99.9%</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Uptime</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:400;color:var(--accent);">50+</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Integrations</div>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Social proof or KPI highlights.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Detailed analytics — use stat cards with trend indicators.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="stats-section"&gt;
+  &lt;div class="stat"&gt;
+    &lt;div class="stat-number"&gt;10k+&lt;/div&gt;
+    &lt;div class="stat-label"&gt;Users&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Countdown -->
+    <section class="demo-section" id="countdown">
+      <h2 class="demo-title">Countdown</h2>
+      <p class="demo-desc">Numeric countdown display with labeled units. Used on maintenance and launch pages.</p>
+
+      <div class="demo-box">
+        <div style="display:flex;gap:16px;justify-content:center;">
+          <div style="text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;background:var(--bg-warm);border-radius:var(--radius);padding:12px 16px;min-width:56px;">02</div>
+            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-top:6px;">Hours</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;background:var(--bg-warm);border-radius:var(--radius);padding:12px 16px;min-width:56px;">34</div>
+            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-top:6px;">Minutes</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;background:var(--bg-warm);border-radius:var(--radius);padding:12px 16px;min-width:56px;">56</div>
+            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-top:6px;">Seconds</div>
+          </div>
+        </div>
+      </div>
+
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Maintenance pages or launch countdowns.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Real-time timers — use JavaScript-driven updates instead.</li></ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="countdown"&gt;
+  &lt;div class="countdown-unit"&gt;
+    &lt;div class="countdown-num"&gt;02&lt;/div&gt;
+    &lt;div class="countdown-label"&gt;Hours&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Usage Block -->
+    <section class="demo-section" id="usage-block">
+      <h2 class="demo-title">Usage Block</h2>
+      <p class="demo-desc">Paired do/dont guidance cards for documenting when to use or avoid a component.</p>
+      <div class="demo-box">
+        <div class="usage-block" style="margin:0;">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul>
+              <li>Primary actions that complete a workflow.</li>
+              <li>Confirming destructive operations with clear labeling.</li>
+            </ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul>
+              <li>The action is passive or navigational — use a link.</li>
+              <li>Too many buttons compete for attention on one screen.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Component documentation pages needing do/don't guidance.</li><li>Design system guidelines with paired recommendations.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>Simple inline help text is sufficient.</li><li>Guidance is better expressed as a single paragraph.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;div class="usage-block"&gt;
+  &lt;div class="usage-do"&gt;
+    &lt;div class="usage-label"&gt;When to use&lt;/div&gt;
+    &lt;ul&gt;&lt;li&gt;Guideline text.&lt;/li&gt;&lt;/ul&gt;
+  &lt;/div&gt;
+  &lt;div class="usage-dont"&gt;
+    &lt;div class="usage-label"&gt;Avoid when&lt;/div&gt;
+    &lt;ul&gt;&lt;li&gt;Guideline text.&lt;/li&gt;&lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Expand / Collapse -->
+    <section class="demo-section" id="expand-collapse">
+      <h2 class="demo-title">Expand / Collapse</h2>
+      <p class="demo-desc">Collapsible content panel using a native <code style="font-family:var(--font-mono);font-size:0.82rem;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">&lt;details&gt;</code> element. Warm header bar with label text and an Expand/Collapse pill indicator. No JavaScript required.</p>
+      <div class="demo-box">
+        <div class="demo-label">Collapsed</div>
+        <details class="usage-toggle" style="margin:0 0 20px;">
+          <summary>Section title</summary>
+          <div style="padding:16px;font-size:0.88rem;color:var(--text-secondary);">This content is revealed when the toggle is expanded. Any HTML can go here — text, lists, cards, or other components.</div>
+        </details>
+        <div class="demo-label">Expanded</div>
+        <details class="usage-toggle" open style="margin:0;">
+          <summary>Section title</summary>
+          <div style="padding:16px;font-size:0.88rem;color:var(--text-secondary);">This content is revealed when the toggle is expanded. Any HTML can go here — text, lists, cards, or other components.</div>
+        </details>
+      </div>
+      <details class="usage-toggle">
+        <summary>When to use / avoid</summary>
+        <div class="usage-block">
+          <div class="usage-do">
+            <div class="usage-label">When to use</div>
+            <ul><li>Hiding optional or secondary content to reduce visual clutter.</li><li>FAQ sections, advanced settings, or lengthy details.</li></ul>
+          </div>
+          <div class="usage-dont">
+            <div class="usage-label">Avoid when</div>
+            <ul><li>The content is critical and should always be visible.</li><li>Users need to compare information across multiple collapsed sections.</li></ul>
+          </div>
+        </div>
+      </details>
+      <div class="code-panel">
+        <button class="code-toggle" onclick="toggleCode(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          View code
+        </button>
+        <div class="code-block">
+          <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          <pre><code>&lt;details class="usage-toggle"&gt;
+  &lt;summary&gt;Section title&lt;/summary&gt;
+  &lt;div style="padding: 16px;"&gt;
+    Collapsible content here.
+  &lt;/div&gt;
+&lt;/details&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="sidebar.js"></script>
+
+<script>
+  function toggleCode(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('show');
+  }
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.page-tab');
+  if (!tabs.length) return;
+  const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+  function updateActive() {
+    let current = sections[0];
+    for (const s of sections) { if (s.getBoundingClientRect().top <= 120) current = s; }
+    const id = current ? current.id : '';
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+  }
+  document.querySelector('.main').addEventListener('scroll', updateActive);
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>
