@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Title — Patina</title>
+
+<!-- Fonts (required) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Patina CSS (required) -->
+<link rel="stylesheet" href="https://aaronpratt1981.github.io/patina/design-system.css">
+<!-- Optional: AI components, extended styles -->
+<!-- <link rel="stylesheet" href="https://aaronpratt1981.github.io/patina/components.css"> -->
+
+<style>
+  /* Page-specific styles go here */
+</style>
+</head>
+<body>
+
+<!-- Background texture -->
+<div class="bg-grain"></div>
+<div class="bg-shape bg-shape-1"></div>
+<div class="bg-shape bg-shape-2"></div>
+
+<!-- ═══ SIDEBAR VARIANT ═══════════════════════════════════
+     Use this layout when you want the sliding sidebar nav.
+     Remove the <nav> and sidebar.js script for standalone pages. -->
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main">
+
+    <div class="main-header">
+      <h1 class="main-title">Page Title</h1>
+      <p class="main-subtitle">A short description of this page.</p>
+    </div>
+
+    <!-- Your content here -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Card Title</h3>
+      </div>
+      <p>Card content goes here.</p>
+    </div>
+
+  </main>
+</div>
+
+<!-- Sidebar navigation (remove for standalone pages) -->
+<script src="https://aaronpratt1981.github.io/patina/sidebar.js"></script>
+
+
+<!-- ═══ STANDALONE VARIANT ════════════════════════════════
+     For pages without sidebar: delete the <div class="layout">
+     wrapper above and use this structure instead:
+
+<div class="container" style="max-width: 960px; margin: 0 auto; padding: 48px 24px;">
+  <h1 class="main-title">Page Title</h1>
+  <p class="main-subtitle">Description.</p>
+
+  <div class="card">
+    <p>Your content here.</p>
+  </div>
+</div>
+
+<script>
+  // Wait for fonts to load before showing content (prevents FOUT)
+  document.fonts.ready.then(() => document.body.classList.add('fonts-ready'));
+</script>
+
+     ═════════════════════════════════════════════════════ -->
+
+
+<!-- Optional: charts and sortable tables -->
+<!-- <script src="https://aaronpratt1981.github.io/patina/patina-charts.js"></script> -->
+<!-- <script src="https://aaronpratt1981.github.io/patina/patina-sortable.js"></script> -->
+
+</body>
+</html>
